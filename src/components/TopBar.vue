@@ -1,81 +1,86 @@
+<script>
+import { ref, computed, watch, getCurrentInstance } from 'vue'
+import { useMarketStore } from 'src/stores/market-store'
+
+export default {
+  name: 'TopBar',
+  emits: ['open', 'filter'],
+  setup() {
+    const globals = ref(getCurrentInstance().appContext.config.globalProperties)
+    const search = ref('')
+    const wait = ref(false)
+    const marketStore = useMarketStore()
+    const markets = ref(marketStore.markets)
+
+    // computed
+    const filteredMarkets = computed(() => {
+      return markets?.value.filter((m) =>
+        m.name.toLowerCase().includes(search.value.toLowerCase())
+      )
+    })
+    // watches
+    watch(search, () => {
+      if (search.value.length > 2 && filteredMarkets.value.length > 0)
+        wait.value = false
+      else if (search.value.length > 2 && filteredMarkets.value.length === 0) {
+        if (wait.value) return
+
+        wait.value = true
+
+        // display something on the screen if there was no data
+        setTimeout(() => {
+          if (search.value.length > 2 && filteredMarkets.value.length === 0) {
+            globals.value.$q.notify({
+              color: 'warning',
+              message: `Nenhuma empresa foi encontrada com o nome: "${search.value}".`,
+              position: 'bottom',
+              timeout: 2000
+            })
+            wait.value = false
+          }
+        }, 500)
+      }
+    })
+    return {
+      filteredMarkets,
+      search,
+      wait,
+      markets
+    }
+  }
+}
+</script>
+
 <template>
   <section id="topbar">
     <div class="search" tabindex="0">
       <i class="fi fi-rr-search"></i>
       <input type="text" placeholder="Pesquisar" v-model="search" />
       <div
-        v-if="search.length > 2 && filteredCompanies.length > 0"
+        v-if="search.length > 2 && filteredMarkets.length > 0"
         class="search-results"
       >
         <div
-          v-for="result in filteredCompanies"
+          v-for="result in filteredMarkets"
           :key="result.id"
           class="item"
           @click="$emit('filter', result), (search = '')"
         >
           <h3>{{ result.name }}</h3>
-          <h4>{{ result.representantive_user }}</h4>
+          <h4>
+            {{ result.representantive_user || result.person_responsible }}
+          </h4>
         </div>
       </div>
     </div>
 
-    <button class="add-companies" @click="$emit('open', true)">
-      <span class="title">adicionar empresa</span>
+    <button class="add-markets" @click="$emit('open', true)">
+      <span class="title">adicionar mercado</span>
       <i class="fi fi-rr-plus"></i>
     </button>
   </section>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-
-export default defineComponent({
-  name: 'TopBar',
-  emits: ['open', 'filter'],
-  props: {
-    companies: {
-      type: Array,
-      required: true
-    }
-  },
-  setup() {
-    const search = ref('')
-    const wait = ref(false)
-    return { search, wait }
-  },
-  computed: {
-    filteredCompanies() {
-      return this.companies?.filter((company) =>
-        company.name.toLowerCase().includes(this.search.toLowerCase())
-      )
-    }
-  },
-  watch: {
-    search() {
-      if (this.search.length > 2 && this.filteredCompanies.length > 0)
-        this.wait = false
-      else if (this.search.length > 2 && this.filteredCompanies.length === 0) {
-        if (this.wait) return
-
-        this.wait = true
-
-        // display something on the screen if there was no data
-        setTimeout(() => {
-          if (this.search.length > 2 && this.filteredCompanies.length === 0) {
-            this.$q.notify({
-              color: 'warning',
-              message: `Nenhuma empresa foi encontrada com o nome: "${this.search}".`,
-              position: 'bottom',
-              timeout: 2000
-            })
-            this.wait = false
-          }
-        }, 500)
-      }
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 #topbar {
   @media screen and (max-width: 1054px) {
@@ -146,7 +151,7 @@ export default defineComponent({
 
     .search-results {
       position: absolute;
-      top: 100%;
+      top: calc(100% + 0.5rem);
       left: 0;
       width: 100%;
       max-height: calc(100vh - 20rem);
@@ -183,7 +188,7 @@ export default defineComponent({
     }
   }
 
-  .add-companies {
+  .add-markets {
     outline: none;
     border: none;
     display: flex;

@@ -1,3 +1,83 @@
+<script>
+import 'leaflet/dist/leaflet.css'
+
+import {
+  LMap,
+  LTileLayer,
+  LControlLayers,
+  LControlZoom,
+  LMarker,
+  LIcon
+} from '@vue-leaflet/vue-leaflet'
+// import { latLng, icon } from "leaflet";
+import { ref, nextTick, computed, onMounted, watch } from 'vue'
+import { useMarketStore } from 'src/stores/market-store'
+import { tiles } from 'app/lib/map/tile-providers'
+
+export default {
+  name: 'MainMap',
+  props: {
+    filter: {
+      type: Number,
+      required: false
+    }
+  },
+  components: {
+    LMap,
+    LTileLayer,
+    LControlLayers,
+    LControlZoom,
+    LMarker,
+    LIcon
+  },
+  setup(props) {
+    const marketStore = useMarketStore()
+    const markets = ref(marketStore.markets)
+    const market = ref({})
+    const filteredBy = computed(() => props.filter)
+    const center = ref([0, 0])
+    const timeout = ref(null)
+    const tileProviders = ref(tiles)
+
+    function handleMarkerClick(_market) {
+      market.value = _market
+      center.value = [_market.latitude, _market.longitude]
+      clearTimeout(timeout.value)
+      // close market details after 25 seconds
+      const seconds = 25 * 1000
+      timeout.value = setTimeout(() => {
+        market.value = {}
+      }, seconds)
+    }
+
+    center.value = [markets.value[0].latitude, markets.value[0].longitude]
+
+    // watches
+    watch(filteredBy, (val) => {
+      nextTick(() => {
+        if (val === 0) return
+
+        // set market as empty in order to reset the state every time the filter changes
+        market.value = {}
+
+        // set market according to filter(market id)
+        const new_market = markets.value.find((m) => m.id === filteredBy.value)
+        handleMarkerClick(new_market)
+      })
+    })
+    return {
+      market,
+      markets,
+      center,
+      timeout,
+      zoom: 8,
+      tileProviders,
+      handleMarkerClick
+    }
+  }
+}
+</script>
+
 <template>
   <section ref="map" id="map">
     <l-map
@@ -20,18 +100,18 @@
         :attribution="tileProvider.attribution"
         layer-type="base"
       />
-      <template v-if="companies.length > 0">
+      <template v-if="markets.length > 0">
         <l-marker
-          v-for="$company in companies"
-          :lat-lng="[$company.latitude, $company.longitude]"
-          :key="$company.id"
-          @click="handleMarkerClick($company)"
+          v-for="_market in markets"
+          :lat-lng="[_market.latitude, _market.longitude]"
+          :key="_market.id"
+          @click="handleMarkerClick(_market)"
         >
           <l-icon
             :icon-size="[24, 24]"
             :icon-anchor="[12, 24]"
             :icon-url="
-              company.id === $company.id
+              market.id === _market.id
                 ? '/icons/marker-secondary.png'
                 : '/icons/marker-primary.png'
             "
@@ -39,23 +119,32 @@
         </l-marker>
       </template>
     </l-map>
-    <div v-if="company.id" class="company-details">
+    <div
+      v-if="market.id"
+      :class="`market-details ${market.id ? 'active' : 'hidden'}`"
+    >
       <div class="details-head">
-        <div class="company-managers">
-          <h4 class="name">{{ company.name }}</h4>
-          <h5 class="rep">{{ company.representantive_user }}</h5>
+        <div class="market-managers">
+          <h4 class="name">{{ market.name }}</h4>
+          <h5 class="rep">{{ market.person_responsible }}</h5>
         </div>
-        <i class="fi fi-rr-building"></i>
       </div>
-      <div class="company-content">
+      <div class="market-content">
         <ul class="content-list">
           <li class="list-item">
             <div class="item-name">
-              <i class="fi fi-rr-envelope"></i>
-              <span>E-mail</span>
+              <!-- I dont know why the whatsapp one is not working -->
+              <!-- <i class="fi fi-brands-whatsapp"></i> -->
+              <i class="fi fi-rr-circle-phone-flip"></i>
+              <span>Whatsapp</span>
             </div>
             <div class="item-value">
-              <span>{{ company.email }}</span>
+              <span>{{
+                String(market.whatsapp_phone).replace(
+                  /^(\d{2})(\d{1})(\d{4})(\d{4})$/,
+                  '($1) $2 $3-$4'
+                )
+              }}</span>
             </div>
           </li>
           <li class="list-item">
@@ -64,19 +153,21 @@
               <span>Localizaçao</span>
             </div>
             <div class="item-value">
-              <span>{{ company.city.title }}</span>
+              <span>{{ market.city.title }} - {{ market.state.letter }}</span>
             </div>
           </li>
-          <li v-if="company.category" class="list-item">
-            <div class="item-name">
-              <i class="fi fi-rr-star"></i>
-              <span>Categoria</span>
-            </div>
-            <div class="item-value">
-              <div class="bg">
-                <span>{{ company.category.name }}</span>
-              </div>
-            </div>
+          <li class="flex gap-6">
+            <button
+              class="focus:ring focus:ring-[#7f43ff80] bg-transparent text-secondary font-semibold py-2 w-[18rem] border-[0.2rem] border-secondary rounded-[0.5rem] transition-all duration-300 ease-in-out"
+              @click="$emit('editing', market.id)"
+            >
+              Editar
+            </button>
+            <button
+              class="focus:ring focus:ring-[#7f43ff80] bg-secondary text-background font-semibold py-2 w-[18rem] border-[0.2rem] border-secondary rounded-[0.5rem] transition-all duration-300 ease-in-out"
+            >
+              Adicionar à Rota
+            </button>
           </li>
         </ul>
       </div>
@@ -84,113 +175,6 @@
   </section>
 </template>
 
-<script>
-import 'leaflet/dist/leaflet.css'
-
-import {
-  LMap,
-  LTileLayer,
-  LControlLayers,
-  LControlZoom,
-  LMarker,
-  LIcon
-} from '@vue-leaflet/vue-leaflet'
-// import { latLng, icon } from "leaflet";
-import { defineComponent, ref, nextTick } from 'vue'
-
-export default defineComponent({
-  name: 'MainMap',
-  props: {
-    companies: {
-      type: Array,
-      required: true
-    },
-    filter: {
-      type: Number,
-      required: false
-    }
-  },
-  components: {
-    LMap,
-    LTileLayer,
-    LControlLayers,
-    LControlZoom,
-    LMarker,
-    LIcon
-  },
-  setup() {
-    const company = ref({})
-    const center = ref([0, 0])
-    const timeout = ref(null)
-    return {
-      company,
-      center,
-      timeout,
-      zoom: 8,
-      tileProviders: [
-        {
-          name: 'OpenStreetMap',
-          visible: true,
-          attribution:
-            '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        },
-        {
-          name: 'OpenTopoMap',
-          visible: false,
-          url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-          attribution:
-            'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        },
-        {
-          name: 'Satelite',
-          visible: false,
-          url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          attribution:
-            'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        }
-      ]
-    }
-  },
-  computed: {
-    iconUrl() {
-      return `https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/274px-Google_Maps_pin.svg.png`
-    }
-  },
-  methods: {
-    handleMarkerClick(company) {
-      this.company = company
-      this.center = [company.latitude, company.longitude]
-      clearTimeout(this.timeout)
-      // close company details after 25 seconds
-      this.timeout = setTimeout(() => {
-        this.company = {}
-      }, 25 * 1000)
-    }
-  },
-  watch: {
-    companies() {
-      nextTick(() => {
-        this.center = [this.companies[0].latitude, this.companies[0].longitude]
-      })
-    },
-    filter(val) {
-      nextTick(() => {
-        if (val === 0) return
-
-        // set company as empty in order to reset the state every time the filter changes
-        this.company = {}
-
-        // set company according to filter(company id)
-        const company = this.companies.find(
-          (company) => company.id === this.filter
-        )
-        this.handleMarkerClick(company)
-      })
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 #map {
   @media screen and (max-width: 1054px) {
@@ -218,8 +202,8 @@ export default defineComponent({
     filter: inherit;
   }
 
-  /* company */
-  .company-details {
+  /* market */
+  .market-details {
     position: fixed;
     bottom: 4rem;
     box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
@@ -228,10 +212,10 @@ export default defineComponent({
     z-index: 40;
     padding: 2rem;
     background-color: white;
-    width: 50rem;
+    max-width: 50rem;
 
     box-sizing: border-box;
-    height: 20.5rem;
+    max-height: 20.5rem;
 
     @media screen and (max-width: 425px) {
       left: 2rem;
@@ -247,7 +231,7 @@ export default defineComponent({
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-      .company-managers {
+      .market-managers {
         display: flex;
         flex-direction: column;
         row-gap: 0.2rem;
@@ -272,7 +256,7 @@ export default defineComponent({
       }
     }
 
-    .company-content {
+    .market-content {
       .content-list {
         list-style: none;
         padding: 0;

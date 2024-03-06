@@ -1,8 +1,8 @@
 <script>
-import { defineComponent, ref } from 'vue'
-import { useUser } from 'app/hooks/use-user'
+import { ref, getCurrentInstance } from 'vue'
+import { userStore } from 'src/stores/user-store'
 
-export default defineComponent({
+export default {
   name: 'LoginPage',
   setup() {
     const form = ref({
@@ -10,18 +10,13 @@ export default defineComponent({
       password: ''
     })
     const isAttemptingLogin = ref(false)
-    const userStore = useUser()
-    return {
-      form,
-      isAttemptingLogin,
-      userStore
-    }
-  },
-  methods: {
-    async onSubmit() {
+    const useUserStore = userStore()
+    const globals = ref(getCurrentInstance().appContext.config.globalProperties)
+
+    async function onSubmit() {
       // check if the form is valid
-      if (!this.form.email || !this.form.password) {
-        this.$q.notify({
+      if (!form.value.email || !form.value.password) {
+        globals.value.$q.notify({
           color: 'info',
           message: 'Preencha todos os campos',
           position: 'bottom',
@@ -31,14 +26,14 @@ export default defineComponent({
         return
       }
 
-      this.isAttemptingLogin = true
-      this.$q.loading.show({
+      isAttemptingLogin.value = true
+      globals.value.$q.loading.show({
         message: 'Realizando login, aguarde...',
         spinnerSize: 100,
         spinnerColor: 'grey'
       })
-      await this.userStore
-        .login({ ...this.form })
+      await useUserStore
+        .login({ ...form.value })
         .then((res) => {
           if (!res.access_token) {
             this.$q.notify({
@@ -51,10 +46,10 @@ export default defineComponent({
             return
           }
           localStorage.setItem('token', res.access_token)
-          this.$router.push('/')
+          globals.value.$router.push('/')
         })
         .catch((err) => {
-          this.$q.notify({
+          globals.value.$q.notify({
             color: 'negative',
             message: err.message,
             position: 'bottom',
@@ -63,15 +58,18 @@ export default defineComponent({
           })
         })
         .finally(() => {
-          this.isAttemptingLogin = false
-          this.$q.loading.hide()
+          isAttemptingLogin.value = false
+          globals.value.$q.loading.hide()
         })
     }
-  },
-  mounted() {
-    this.$q.loading.hide()
+    return {
+      form,
+      isAttemptingLogin,
+      useUserStore,
+      onSubmit
+    }
   }
-})
+}
 </script>
 
 <template>

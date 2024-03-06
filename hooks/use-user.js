@@ -16,43 +16,17 @@
 // }
 
 import { defineStore } from 'pinia'
-import useApi from 'src/composables/api'
-import axios from 'axios'
-export const useUser = defineStore('userStore', {
-  state: () => {
-    return {
-      currentUser: null
-    }
-  },
-  actions: {
-    async login(user) {
-      const { login } = useApi()
-      try {
-        const response = await login(user)
-        this.currentUser = response.user_logged
-        return response
-      } catch (error) {
-        throw error.response ? error.response.data : error
-      }
-    },
-    async getUserInfo(token) {
-      const { getCurrentUser } = useApi()
-      try {
-        const user = await getCurrentUser()
-        this.currentUser = { ...this.currentUser, ...user }
-        return true
-      } catch (error) {
-        return false
-      }
-    }
-  },
-  getters: {
-    getToken: (state) => {
-      return localStorage.getItem('token')
-    },
-    isLoggedIn: (state) => {
-      return !state.currentUser
-    }
-  },
-  persist: true
-})
+import { userStore } from 'src/stores/user-store'
+
+export const useUser = () => {
+  const $userStore = userStore()
+  const userStoreCurrentUser = $userStore.currentUser
+  const currentUser = userStoreCurrentUser
+
+  const getUserInfo = $userStore.getUserInfo
+
+  return {
+    currentUser,
+    getUserInfo
+  }
+}

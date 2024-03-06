@@ -1,5 +1,5 @@
 <script>
-import { defineComponent, onMounted, ref, getCurrentInstance } from 'vue'
+import { onMounted, ref, getCurrentInstance } from 'vue'
 import jwt_decode from 'jwt-decode'
 import SideBar from 'components/sidebar/SideBar.vue'
 import { useUser } from 'app/hooks/use-user'
@@ -10,7 +10,7 @@ export default {
   },
   setup() {
     const globals = ref(getCurrentInstance().appContext.config.globalProperties)
-    const userStore = useUser()
+    const user = useUser()
     // prevent the loading spinner from showing on page load, just in case
     onMounted(() => {
       globals.value.$q.loading.hide()
@@ -21,7 +21,7 @@ export default {
         localStorage.removeItem('token')
         globals.value.$router.push('/login')
       } else {
-        const currentUser = userStore.currentUser
+        const currentUser = user.currentUser
 
         if (currentUser && currentUser.role !== 'admin') {
           globals.value.$router.push('/rotas')
@@ -34,7 +34,7 @@ export default {
       }
     })
     return {
-      userStore
+      user
     }
   }
 }

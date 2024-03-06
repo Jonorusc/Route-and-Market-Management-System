@@ -33,8 +33,6 @@ export default {
       }
     })
 
-    console.log(userStore.currentUser)
-
     function logoff() {
       localStorage.removeItem('token')
 
@@ -48,7 +46,7 @@ export default {
       })
     }
 
-    function canSee(admin_required = false) {
+    function authorizedToSee(admin_required = false) {
       if (admin_required) {
         return userStore?.currentUser?.role === 'admin' || false
       }
@@ -60,7 +58,7 @@ export default {
       showSideBar,
       items,
       logoff,
-      canSee,
+      authorizedToSee,
       sidebarRef
     }
   }
@@ -82,7 +80,7 @@ export default {
         <ul class="menu-list" v-if="userStore.currentUser">
           <template v-for="item in items" :key="item.id">
             <RouterLink
-              v-if="canSee(item.admin_required)"
+              v-if="authorizedToSee(item.admin_required)"
               :to="{ path: item.route_path }"
               v-slot="{ isExactActive }"
             >
