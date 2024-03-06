@@ -1,52 +1,42 @@
-# convicti-technical-test
+# The Challenge
 
-This template should help get you started developing with Vue 3 in Vite.
+The overall proposal of the system is to provide an area where it should be possible to manage and query companies based on a general map.
 
-## Recommended IDE Setup
+## Installation Instructions
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+This guide will provide the necessary steps to set up and run the application in your local development environment.
 
-## Type Support for `.vue` Imports in TS
+### Prerequisites
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+Make sure you have the following tools installed on your system:
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+- [Node.js](https://nodejs.org) - We use Node.js to run the JavaScript code of the application.
+- [npm](https://www.npmjs.com/) - JavaScript package manager (usually installed with Node.js).
+- [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) - JavaScript package manager.
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+### Installation Steps
 
-## Customize configuration
+1. **Clone the repository:**
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+   ```sh
+   git clone https://github.com/Jonorusc/code-challenges.git
+   cd vue
+   cd convicti-companies
+   ```
 
-## Project Setup
+2. **Install dependencies:**
 
-```sh
-npm install
-```
+   ```sh
+   yarn
+   ## OR
+   yarn install
+   ```
 
-### Compile and Hot-Reload for Development
+3. **Set up environment variables:**
+   Rename the .env.example file to .env and configure the necessary environment variables such as API keys, database settings, etc.
 
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+4. **Start the application:**
+   ```sh
+   yarn dev
+   ```
+   After loading, the page will automatically open in your default web browser.

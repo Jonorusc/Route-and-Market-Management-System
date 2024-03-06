@@ -1,0 +1,94 @@
+// app global css in SCSS form
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// 1rem = 10px
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  overflow: hidden;
+}
+
+// espaçamentos multiplos de 4
+
+@for $i from 1 through 10 {
+  .m-#{$i} {
+    margin: #{$i * 4}px !important;
+  }
+  .p-#{$i} {
+    padding: #{$i * 4}px !important;
+  }
+
+  .mt-#{$i} {
+    margin-top: #{$i * 4}px !important;
+  }
+  .mr-#{$i} {
+    margin-right: #{$i * 4}px !important;
+  }
+  .mb-#{$i} {
+    margin-bottom: #{$i * 4}px !important;
+  }
+  .ml-#{$i} {
+    margin-left: #{$i * 4}px !important;
+  }
+
+  .pt-#{$i} {
+    padding-top: #{$i * 4}px !important;
+  }
+  .pr-#{$i} {
+    padding-right: #{$i * 4}px !important;
+  }
+  .pb-#{$i} {
+    padding-bottom: #{$i * 4}px !important;
+  }
+  .pl-#{$i} {
+    padding-left: #{$i * 4}px !important;
+  }
+}
+
+.q-field--standout .q-field__control {
+  padding: 0 12px;
+  background: rgb(255 255 255);
+  border-radius: 4px;
+  transition:
+    box-shadow 0.36s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.36s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.1);
+  width: 30rem;
+
+  input,
+  .q-field__native {
+    color: $labels;
+    &:active,
+    &:focus {
+      outline: none;
+      color: $labels;
+    }
+  }
+}
+
+.twice {
+  .q-field--standout .q-field__control {
+    width: calc(15rem - 0.5rem);
+  }
+}
+
+.q-field--standout.q-field--highlighted .q-field__control {
+  background: rgb(255 255 255);
+  box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.1);
+}
+
+.q-field--dense .q-field__append + .q-field__append {
+  padding-left: 2px;
+  color: $labels;
+}
