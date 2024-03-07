@@ -15,6 +15,22 @@ export default {
     colspans: {
       type: Object,
       default: () => ({})
+    },
+    filter: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  computed: {
+    filteredData() {
+      return this.data.filter((item) => {
+        for (let key in this.filter) {
+          if (item[key] !== this.filter[key]) {
+            return false
+          }
+        }
+        return true
+      })
     }
   }
 }
@@ -28,6 +44,7 @@ export default {
           <th
             v-for="(header, i) in headers"
             :key="`${header}${i}`"
+            :colspan="colspans[i] || 1"
             class="header-item"
           >
             {{ `${header !== 'actions' ? header : ''}` }}
@@ -36,12 +53,15 @@ export default {
       </thead>
       <tbody>
         <tr
-          v-for="entity in data"
+          v-for="entity in filteredData"
           :key="`entity-${entity.name}`"
-          :colspan="colspans[i] || 1"
           class="table-rows"
         >
-          <td v-for="(header, i) in headers" :key="`${header}-${i}`">
+          <td
+            v-for="(header, i) in headers"
+            :key="`${header}-${i}`"
+            :colspan="colspans[i] || 1"
+          >
             <slot :name="`column${i}`" :entity="entity"></slot>
           </td>
         </tr>
@@ -60,7 +80,10 @@ table {
   -webkit-border-radius: 10px;
   border-radius: 10px;
   background-color: #f0f0f0;
-  user-select: none;
+
+  tbody {
+    overflow-y: auto;
+  }
 
   tr:first-child td:first-child {
     border-top-left-radius: 0.5rem;
