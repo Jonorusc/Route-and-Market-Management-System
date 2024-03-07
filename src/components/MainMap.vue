@@ -203,7 +203,7 @@ export default {
 <style lang="scss" scoped>
 #map {
   @media screen and (max-width: 1054px) {
-    margin-left: 0;
+    /* margin-left: 0; */
     width: 100%;
     padding: 0;
     border-radius: unset;
@@ -212,8 +212,8 @@ export default {
     }
   }
 
-  margin-left: 29rem;
-  width: calc(100% - 29rem);
+  /* margin-left: 29rem; */
+  /* width: calc(100% - 29rem); */
   height: calc(100dvh - 10rem);
   padding: 0 2rem 2rem 2rem;
   border-radius: 1.4rem;

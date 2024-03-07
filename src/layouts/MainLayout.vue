@@ -45,7 +45,9 @@ export default {
     <q-page-container>
       <div class="flex overflow-hidden bg-[#f8f8f8]">
         <SideBar />
-        <main class="flex flex-col w-full">
+        <main
+          class="flex flex-col w-full lg:ml-[29rem] lg:w-[calc(100% - 29rem)]"
+        >
           <router-view v-slot="{ Component, route }">
             <transition :name="route.meta.transition || 'slide-right'">
               <component :is="Component" :key="route.path" />

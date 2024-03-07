@@ -232,7 +232,7 @@ export default {
     })
 
     watch(state_id, async (val) => {
-      if (val && locationStore.cities.length < 1) {
+      if (val) {
         globals.value.$q.loading.show({
           message: 'Carregando cidades...',
           spinnerSize: 100,
@@ -241,10 +241,7 @@ export default {
         const response = await locationStore.fetchCity(val)
         cities.value = response
         globals.value.$q.loading.hide()
-      } else {
-        cities.value = locationStore.cities
       }
-
       if (market_id.value !== null) {
         const current_market = marketStore.markets.find(
           (m) => m.id === market_id.value

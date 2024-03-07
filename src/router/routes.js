@@ -11,7 +11,7 @@ const routes = [
       // ROTAS - ALL THE 'ROTAS' ROUTES
       {
         path: '/rotas',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/RoutesPage.vue'),
         meta: { transition: 'slide-left' }
       },
       {

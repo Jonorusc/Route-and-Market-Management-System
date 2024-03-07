@@ -52,19 +52,24 @@ export default {
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="entity in filteredData"
-          :key="`entity-${entity.name}`"
-          class="table-rows"
+        <template
+          v-for="(entity, entity_index) in filteredData"
+          :key="`entity-${entity_index}`"
         >
-          <td
-            v-for="(header, i) in headers"
-            :key="`${header}-${i}`"
-            :colspan="colspans[i] || 1"
-          >
-            <slot :name="`column${i}`" :entity="entity"></slot>
-          </td>
-        </tr>
+          <tr class="table-rows">
+            <td
+              v-for="(header, i) in headers"
+              :key="`${header}-${i}`"
+              :colspan="colspans[i] || 1"
+            >
+              <slot
+                :name="`column${i}`"
+                :entity="{ row_id: entity_index, data: entity }"
+              ></slot>
+            </td>
+          </tr>
+          <slot :name="`column-${entity_index}-expanded`"></slot>
+        </template>
       </tbody>
     </table>
   </div>
@@ -83,6 +88,7 @@ table {
 
   tbody {
     overflow-y: auto;
+    max-height: calc(100vh - 30rem);
   }
 
   tr:first-child td:first-child {
@@ -110,6 +116,7 @@ table {
     border-bottom: 0.1rem solid #f0f0f0;
     color: #414141;
     font-weight: 600;
+    position: relative;
     &:hover {
       outline: solid 0.5px #b6b6b6;
       outline-offset: -0.5px;

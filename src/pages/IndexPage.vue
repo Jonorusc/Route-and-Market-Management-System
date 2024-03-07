@@ -1,18 +1,14 @@
 <script>
-import {
-  nextTick,
-  ref,
-  onMounted,
-  computed,
-  reactive,
-  getCurrentInstance
-} from 'vue'
+import { ref, computed, getCurrentInstance, defineAsyncComponent } from 'vue'
 
 // componentes
+const AddRoute = defineAsyncComponent(() => import('components/AddRoute.vue'))
+const AddMarket = defineAsyncComponent(() => import('components/AddMarket.vue'))
+
+// load first the topbar and mainmap
 import Topbar from 'components/TopBar.vue'
 import MainMap from 'components/MainMap.vue'
-import AddMarket from 'components/AddMarket.vue'
-import AddRoute from 'components/AddRoute.vue'
+
 //
 import { useMarketStore } from 'src/stores/market-store'
 import { useRouteStore } from 'src/stores/route-store'
@@ -32,7 +28,7 @@ export default {
     const openAddMarket = ref(false)
     const openAddRoute = ref(false)
     const marketToEdit = ref(null)
-    const markets = computed(() => marketStore.markets)
+    const markets = computed(() => marketStore.getMarkets)
     const filterId = ref(0)
 
     function onSuccess(market) {
@@ -58,10 +54,11 @@ export default {
     function handlePutOnRoute(market) {
       try {
         routeStore.addMarketToRoute(market.id)
-        // take the latlngs from each market and put within an array tu use as a polyline
+        // Here I need to gather the latlngs from the market and put it on the route, like, I'll be able to create polylines synchronously. Amazing, isn't it?
         const currentLatLngs = routeStore.getLatLngs
         const latlngs = [market.latitude, market.longitude]
         routeStore.setLatLngs([...currentLatLngs, latlngs])
+        // Everytime the user remove or add a new market to the routeStore I'll be able to update the polyline, so they can see the routes at the map component
       } catch (error) {
         globals.value.$q.notify({
           color: 'negative',
@@ -72,11 +69,7 @@ export default {
       }
     }
 
-    onMounted(() => {
-      nextTick(() => {
-        marketStore.fetchMarkets()
-      })
-    })
+    marketStore.fetchMarkets()
 
     return {
       openAddMarket,

@@ -65,5 +65,8 @@ export const useRouteStore = defineStore('routeStore', {
     getLatLngs() {
       return this.latlngs
     }
+  },
+  persist: {
+    paths: ['routes']
   }
 })

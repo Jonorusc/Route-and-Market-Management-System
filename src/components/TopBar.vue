@@ -110,7 +110,7 @@ export default {
 <style lang="scss" scoped>
 #topbar {
   @media screen and (max-width: 1054px) {
-    margin-left: 0;
+    /* margin-left: 0; */
     width: 100%;
   }
 
@@ -120,8 +120,8 @@ export default {
     row-gap: 1rem;
   }
 
-  margin-left: 29rem;
-  width: calc(100% - 29rem);
+  /* margin-left: 29rem; */
+  /* width: calc(100% - 29rem); */
   padding: 2rem;
   display: flex;
   justify-content: space-between;
