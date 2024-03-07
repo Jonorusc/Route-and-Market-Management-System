@@ -44,5 +44,10 @@ export const useMarketStore = defineStore('marketStore', {
       }
     }
   },
+  getters: {
+    getMarkets() {
+      return this.markets
+    }
+  },
   persist: true
 })

@@ -7,12 +7,14 @@ import {
   LControlLayers,
   LControlZoom,
   LMarker,
-  LIcon
+  LIcon,
+  LPolyline
 } from '@vue-leaflet/vue-leaflet'
 // import { latLng, icon } from "leaflet";
 import { ref, nextTick, computed, onMounted, watch } from 'vue'
 import { useMarketStore } from 'src/stores/market-store'
 import { tiles } from 'app/lib/map/tile-providers'
+import { useRouteStore } from 'src/stores/route-store'
 
 export default {
   name: 'MainMap',
@@ -28,16 +30,26 @@ export default {
     LControlLayers,
     LControlZoom,
     LMarker,
-    LIcon
+    LIcon,
+    LPolyline
   },
   setup(props) {
     const marketStore = useMarketStore()
-    const markets = ref(marketStore.markets)
+    const routeStore = useRouteStore()
+
+    const markets = computed(() => marketStore.getMarkets)
     const market = ref({})
     const filteredBy = computed(() => props.filter)
     const center = ref([0, 0])
     const timeout = ref(null)
     const tileProviders = ref(tiles)
+
+    const polyline = computed(() => {
+      return {
+        latlngs: routeStore.getLatLngs || [],
+        color: '#0e044a'
+      }
+    })
 
     function handleMarkerClick(_market) {
       market.value = _market
@@ -50,7 +62,9 @@ export default {
       }, seconds)
     }
 
-    center.value = [markets.value[0].latitude, markets.value[0].longitude]
+    if (markets.value.length > 0) {
+      center.value = [markets.value[0].latitude, markets.value[0].longitude]
+    }
 
     // watches
     watch(filteredBy, (val) => {
@@ -68,6 +82,8 @@ export default {
     return {
       market,
       markets,
+      routeStore,
+      polyline,
       center,
       timeout,
       zoom: 8,
@@ -113,10 +129,18 @@ export default {
             :icon-url="
               market.id === _market.id
                 ? '/icons/marker-secondary.png'
+                : routeStore?.markets_id.includes(_market.id)
+                ? '/icons/marker-secondary.png'
                 : '/icons/marker-primary.png'
             "
           />
         </l-marker>
+      </template>
+      <template v-if="polyline?.latlngs?.length > 0">
+        <l-polyline
+          :lat-lngs="polyline.latlngs"
+          :color="polyline.color"
+        ></l-polyline>
       </template>
     </l-map>
     <div
@@ -158,13 +182,14 @@ export default {
           </li>
           <li class="flex gap-6">
             <button
-              class="focus:ring focus:ring-[#7f43ff80] bg-transparent text-secondary font-semibold py-2 w-[18rem] border-[0.2rem] border-secondary rounded-[0.5rem] transition-all duration-300 ease-in-out"
+              class="focus:ring focus:ring-[#7f43ff80] bg-transparent text-secondary font-semibold py-2 md:w-[18rem] w-[10rem] border-[0.2rem] border-secondary rounded-[0.5rem] transition-all duration-300 ease-in-out"
               @click="$emit('editing', market.id)"
             >
               Editar
             </button>
             <button
               class="focus:ring focus:ring-[#7f43ff80] bg-secondary text-background font-semibold py-2 w-[18rem] border-[0.2rem] border-secondary rounded-[0.5rem] transition-all duration-300 ease-in-out"
+              @click="$emit('putonroute', market)"
             >
               Adicionar à Rota
             </button>

@@ -1,15 +1,17 @@
 <script>
 import { ref, computed, watch, getCurrentInstance } from 'vue'
 import { useMarketStore } from 'src/stores/market-store'
+import { useRouteStore } from 'src/stores/route-store'
 
 export default {
   name: 'TopBar',
-  emits: ['open', 'filter'],
+  emits: ['open', 'filter', 'openroute'],
   setup() {
     const globals = ref(getCurrentInstance().appContext.config.globalProperties)
     const search = ref('')
     const wait = ref(false)
     const marketStore = useMarketStore()
+    const routeStore = useRouteStore()
     const markets = ref(marketStore.markets)
 
     // computed
@@ -45,7 +47,8 @@ export default {
       filteredMarkets,
       search,
       wait,
-      markets
+      markets,
+      routeStore
     }
   }
 }
@@ -74,10 +77,33 @@ export default {
       </div>
     </div>
 
-    <button class="add-markets" @click="$emit('open', true)">
-      <span class="title">adicionar mercado</span>
-      <i class="fi fi-rr-plus"></i>
-    </button>
+    <div class="flex gap-4">
+      <button class="add-markets" @click="$emit('open', true)">
+        <span class="title">adicionar mercado</span>
+        <i class="fi fi-rr-plus"></i>
+      </button>
+      <button
+        v-if="routeStore.markets_id.length > 0"
+        class="bg-secondary w-[17rem] rounded-[0.8rem] flex justify-between items-center px-8"
+        @click="$emit('openroute', true)"
+      >
+        <div class="flex flex-col items-center">
+          <span class="!text-background text-[1.6rem] font-semibold"
+            >Nova rota</span
+          >
+          <span class="!text-background text-[1.4rem]">
+            {{ routeStore.markets_id.length }} mercados
+          </span>
+        </div>
+        <div
+          class="grid place-items-center justify-center w-[3rem] h-[3rem] bg-background rounded-[50%]"
+        >
+          <i
+            class="fi fi-rr-angle-small-right !text-secondary mt-1 text-3xl"
+          ></i>
+        </div>
+      </button>
+    </div>
   </section>
 </template>
 

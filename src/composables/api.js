@@ -136,6 +136,132 @@ export default function useApi() {
     }
   }
 
+  /* 
+  ROUTES
+  @return {array} - The list of routes
+
+  @example
+
+  ```javascript
+  const routes: { data: ROUTE[] } = await getAllRoutes()
+  ```
+  */
+
+  const getAllRoutes = async () => {
+    try {
+      const response = await api.get(`/routes`)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
+  /* 
+  ROUTES
+  @params {body}} - The body of the route
+
+  @example
+
+  ```javascript
+  const route = {
+    "promoter_id": 2,
+    "markets": [1, 3]
+  }
+
+  const new_route: ROURTE = await createRoute(route)
+  ```
+  */
+
+  const createRoute = async (route) => {
+    try {
+      const response = await api.post(`/routes`, route)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
+  /*
+    PROMOTERS 
+    @return {array} id - list of promoters
+
+    @example
+
+      ```javascript
+      const promoters: { data: PROMOTER[] } = await getAllPromoters()
+      ```
+  */
+
+  const getAllPromoters = async () => {
+    try {
+      const response = await api.get(`/promoters`)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
+  /*
+    PROMOTERS
+
+    @param {body} id - body of the promoter
+    @return {object} - The promoter object created
+
+    @example
+      
+      ```javascript
+      const promoter = {
+      "name": "Bruno Tales",
+      "email": "bruno@tales.com",
+      "cpf": "99888876762",
+      "phonenumber": "44988887777"
+      }
+
+      const newPromoter: PROMOTER = await createPromoter(promoter)
+      ```
+
+  */
+
+  const createPromoter = async (promoter) => {
+    try {
+      const response = await api.post(`/promoters`, promoter)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
+  /*
+    PROMOTERS
+
+    @param {id} id - id of the promoter
+    @param {body} id - body of the promoter
+    @return {object} - The promoter object created
+
+    @example
+      
+      ```javascript
+      const promoter = {
+      "name": "Bruno Tales",
+      "email": "bruno@tales.com",
+      "cpf": "99888876762",
+      "phonenumber": "44988887777"
+      }
+
+      const newPromoter: {data:PROMOTER} = await updatePromoter(1,promoter)
+      ```
+
+  */
+
+  const updatePromoter = async (id, promoter) => {
+    try {
+      const response = await api.post(`/promoters/${id}`, promoter)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
   /*
     THESE FUNCTIONS ARE FOR THE STATE AND CITIES ENTITY
   */
@@ -177,6 +303,11 @@ export default function useApi() {
     getMarket,
     createMarket,
     updateMarket,
+    getAllRoutes,
+    createRoute,
+    getAllPromoters,
+    createPromoter,
+    updatePromoter,
     getStates,
     getCitiesByState,
     getCityFromCoords

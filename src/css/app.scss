@@ -99,3 +99,9 @@ body {
   padding-left: 2px;
   color: $labels;
 }
+
+.q-form {
+  @media screen and (max-width: 425px) {
+    height: 100%;
+  }
+}

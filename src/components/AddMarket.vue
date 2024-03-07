@@ -69,28 +69,36 @@ export default {
     }
     // add option to filter in q-select
     function statesFilterFn(val, options = { store: [], query: 'sigla' }) {
-      states.value = options.store
-      if (val.length < 1) {
-        return
+      try {
+        states.value = options.store
+        if (val.length < 1) {
+          return
+        }
+        const needle = val?.toLowerCase()
+        const busca = options.store.filter((v) =>
+          v[options.query]?.toLowerCase().includes(needle)
+        )
+        //
+        if (busca.length > 0) states.value = busca
+      } catch {
+        //
       }
-      const needle = val?.toLowerCase()
-      const busca = options.store.filter((v) =>
-        v[options.query]?.toLowerCase().includes(needle)
-      )
-      //
-      if (busca.length > 0) states.value = busca
     }
     function citiesFilterFn(val, options = { store: [], query: 'sigla' }) {
-      cities.value = options.store
-      if (val?.length < 1) {
-        return
+      try {
+        cities.value = options.store
+        if (val?.length < 1) {
+          return
+        }
+        const needle = val?.toLowerCase()
+        const busca = options.store.filter((v) =>
+          v[options.query]?.toLowerCase().includes(needle)
+        )
+        //
+        if (busca.length > 0) cities.value = busca
+      } catch {
+        //
       }
-      const needle = val?.toLowerCase()
-      const busca = options.store.filter((v) =>
-        v[options.query]?.toLowerCase().includes(needle)
-      )
-      //
-      if (busca.length > 0) cities.value = busca
     }
 
     function onReset() {
@@ -275,7 +283,7 @@ export default {
           <h4>
             {{ `${market_id === null ? 'Cadastrar' : 'Editar'}` }} mercado
           </h4>
-          <div class="flex gap-10 justify-center">
+          <div class="flex gap-10 justify-center min-h-full">
             <div class="left">
               <div class="input">
                 <label for="c-name">Nome</label>
@@ -506,10 +514,11 @@ export default {
     @media screen and (min-width: 1440px) {
       width: 55dvw;
       overflow-y: auto;
-      /* h4 {
-        text-align: center;
-      } */
       padding: 2rem 10rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      padding: 1rem;
     }
     width: 100%;
     overflow-y: auto;
@@ -556,6 +565,9 @@ export default {
       margin-bottom: 0.5rem;
     }
 
+    @media screen and (max-width: 480px) {
+      margin: 0.5rem 0;
+    }
     input {
       text-indent: 0.6rem;
       font-size: 1.8rem;
@@ -656,6 +668,10 @@ export default {
         background-color: $labels;
         color: $background;
         box-shadow: 0 0 0.3rem rgba(0, 0, 0, 0.1);
+      }
+      @media screen and (max-width: 480px) {
+        width: 20rem;
+        padding: 1rem 0;
       }
     }
   }
