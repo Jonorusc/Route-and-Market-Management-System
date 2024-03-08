@@ -15,6 +15,7 @@ import { ref, nextTick, computed, onMounted, watch } from 'vue'
 import { useMarketStore } from 'src/stores/market-store'
 import { tiles } from 'app/lib/map/tile-providers'
 import { useRouteStore } from 'src/stores/route-store'
+import { useUser } from 'app/hooks/use-user'
 
 export default {
   name: 'MainMap',
@@ -33,10 +34,11 @@ export default {
     LIcon,
     LPolyline
   },
-  setup(props) {
+  emits: ['clicked_market', 'editing', 'putonroute', 'clicked_map'],
+  setup(props, ctx) {
     const marketStore = useMarketStore()
     const routeStore = useRouteStore()
-
+    const user = useUser()
     const markets = computed(() => marketStore.getMarkets)
     const market = ref({})
     const filteredBy = computed(() => props.filter)
@@ -51,7 +53,12 @@ export default {
       }
     })
 
+    function handleClickOnMap(event) {
+      ctx.emit('clicked_map', event)
+    }
+
     function handleMarkerClick(_market) {
+      ctx.emit('clicked_market', _market)
       market.value = _market
       center.value = [_market.latitude, _market.longitude]
       clearTimeout(timeout.value)
@@ -59,6 +66,7 @@ export default {
       const seconds = 25 * 1000
       timeout.value = setTimeout(() => {
         market.value = {}
+        ctx.emit('clicked_market', {})
       }, seconds)
     }
 
@@ -85,7 +93,9 @@ export default {
       routeStore,
       polyline,
       center,
+      user,
       timeout,
+      handleClickOnMap,
       zoom: 8,
       tileProviders,
       handleMarkerClick
@@ -101,6 +111,7 @@ export default {
       :options="{ zoomControl: false }"
       :zoom="zoom"
       :center="[center[0], center[1]]"
+      @click="handleClickOnMap"
       class="map"
     >
       <!-- gives option to choose layers and zoom -->
@@ -144,7 +155,7 @@ export default {
       </template>
     </l-map>
     <div
-      v-if="market.id"
+      v-if="market.id && user?.currentUser?.role === 'admin'"
       :class="`market-details ${market.id ? 'active' : 'hidden'}`"
     >
       <div class="details-head">
