@@ -79,3 +79,8 @@ Make sure you have the following tools installed on your system:
    yarn dev
    ```
    After loading, the page will automatically open in your default web browser.
+
+
+### See how it looks like
+[Admin view - YOUTUBE](https://youtu.be/XKv0MaInR0A)
+[Promoter View- YOUTUBE](https://youtu.be/t7Zw322DKyQ)
