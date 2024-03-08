@@ -158,7 +158,7 @@ export default {
       </Slide>
     </Carousel>
     <!-- table -->
-    <div>
+    <div class="overflow-y-auto h-[calc(100vh-14rem)]">
       <CustomTable
         :headers="headers"
         :data="data"
