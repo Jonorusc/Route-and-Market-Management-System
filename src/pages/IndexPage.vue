@@ -33,6 +33,9 @@ export default {
     function onSuccess(market) {
       // marketStore.fetchMarkets()
     }
+
+    function handleClickOnMap(event) {}
+
     function handleMarketModal(value) {
       marketToEdit.value = null
       openAddMarket.value = value
@@ -82,7 +85,8 @@ export default {
       handleTopbarFilter,
       handleOpenRoute,
       handleEditMode,
-      handlePutOnRoute
+      handlePutOnRoute,
+      handleClickOnMap
     }
   }
 }
@@ -131,6 +135,7 @@ export default {
       :filter="filterId"
       @editing="handleEditMode"
       @putonroute="handlePutOnRoute"
+      @clicked_map="handleClickOnMap"
     />
     <AddMarket
       @close="handleMarketModal"

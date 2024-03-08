@@ -1,26 +1,23 @@
-<script>
-import { nextTick, ref, onMounted, computed, getCurrentInstance } from 'vue'
+<script setup>
+import { defineAsyncComponent } from 'vue'
 import { useUser } from 'app/hooks/use-user'
 
 // components
-import AdminRoutes from 'components/AdminRoutes.vue'
+const PromoterRoutes = defineAsyncComponent(() =>
+  import('components/PromoterRoutes.vue')
+)
+const AdminRoutes = defineAsyncComponent(() =>
+  import('components/AdminRoutes.vue')
+)
 
-export default {
-  name: 'RoutesPage',
-  components: { AdminRoutes },
-  setup() {
-    const globals = ref(getCurrentInstance().appContext.config.globalProperties)
-    const {
-      currentUser: { role }
-    } = useUser()
-
-    return { role }
-  }
-}
+const {
+  currentUser: { role }
+} = useUser()
 </script>
 
 <template>
-  <div class="h-[100dvh] p-[2rem]">
-    <template v-if="role === 'admin'"><AdminRoutes /> </template>
+  <div class="h-[100dvh]">
+    <AdminRoutes v-if="role === 'admin'" />
+    <PromoterRoutes v-else />
   </div>
 </template>

@@ -94,10 +94,9 @@ export default {
       <input
         type="text"
         ref="search"
-        placeholder="Pesquisar"
-        v-model="filter"
+        :placeholder="`Pesquisar ${entity}`"
+        @input="debouncedFilter($event.target.value)"
       />
-      <!-- @input="debouncedFilter($event.target.value)" -->
       <div
         v-if="filter.length > 2 && filteredData.length > 0 && showResults"
         class="search-results"

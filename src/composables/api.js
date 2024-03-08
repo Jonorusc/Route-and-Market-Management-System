@@ -363,6 +363,44 @@ export default function useApi() {
   }
 
   /*
+    sales
+
+    @param {body} id - The body of the sale
+    @return {object} - The sale object created
+
+    @example
+      
+      ```javascript
+      const sale = {
+          "route_id": 6,
+          "market_id": 3,
+          "products": [
+              {
+                  "id": 4,
+                  "quantity": 2
+              },
+              {
+                  "id": 5,
+                  "quantity": 2
+              }
+          ]
+      }
+
+      const newSale: SALE = await createSale(sale)
+      ```
+
+  */
+
+  const createSale = async (sale) => {
+    try {
+      const response = await api.post(`/sales`, sale)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
+  /*
     THESE FUNCTIONS ARE FOR THE STATE AND CITIES ENTITY
   */
   const getStates = async () => {
@@ -411,6 +449,7 @@ export default function useApi() {
     getAllProducts,
     createProduct,
     updateProduct,
+    createSale,
     getStates,
     getCitiesByState,
     getCityFromCoords

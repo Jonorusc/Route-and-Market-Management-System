@@ -1,5 +1,5 @@
 <script>
-import { nextTick, ref, onMounted, computed, getCurrentInstance } from 'vue'
+import { ref, computed, getCurrentInstance } from 'vue'
 
 // componentes
 import 'vue3-carousel/dist/carousel.css'
@@ -135,94 +135,98 @@ export default {
 </script>
 
 <template>
-  <!-- carousel -->
-  <Carousel
-    class="mb-4"
-    :items-to-show="2.5"
-    :wrap-around="false"
-    snapAlign="start"
-    :breakpoints="breakpoints"
-  >
-    <Slide
-      v-for="(promoter, i) in promoterStore.getPromoters"
-      :key="i"
-      :class="`carousel-item ${filter?.promoter === promoter.name && 'active'}`"
-      @click="handleFilterTable({ promoter_name: promoter.name })"
+  <div class="p-[2rem]">
+    <!-- carousel -->
+    <Carousel
+      class="mb-4"
+      :items-to-show="2.5"
+      :wrap-around="false"
+      snapAlign="start"
+      :breakpoints="breakpoints"
     >
-      <div>
-        {{ promoter.name }}
-      </div>
-    </Slide>
-  </Carousel>
-  <!-- table -->
-  <div>
-    <CustomTable
-      :headers="headers"
-      :data="data"
-      :colspans="colspans"
-      :filter="filter"
-    >
-      <template #column0="{ entity }">
-        {{ String(entity.data.route_number).toUpperCase() }}
-      </template>
-      <template #column1="{ entity }">
-        {{ entity.data.promoter }}
-      </template>
-      <template #column2="{ entity }">
-        {{ entity.data.visits_made }}
-      </template>
-      <template #column3="{ entity }">
-        {{ entity.data.total_visits }}
-      </template>
-      <template #column4="{ entity }">
-        <button
-          @click="
-            handleRowClick({
-              route_id: entity.data.id,
-              row_index: entity.row_id
-            })
-          "
-          class="bg-[#dee6f8] p-[0.5rem] rounded-[0.5rem] w-[4rem] h-[4rem] grid place-content-center"
-        >
-          <i
-            v-if="active_row.row_index === entity.row_id"
-            class="fi fi-rr-angle-small-up text-[2rem] block mt-3"
-          ></i>
-          <i
-            v-else
-            class="fi fi-rr-angle-small-down text-[2rem] block mt-3"
-          ></i>
-        </button>
-      </template>
-      <template
-        v-slot:[`column-${active_row.row_index}-expanded`]
-        v-if="active_row.row_index !== null"
+      <Slide
+        v-for="(promoter, i) in promoterStore.getPromoters"
+        :key="i"
+        :class="`carousel-item ${
+          filter?.promoter === promoter.name && 'active'
+        }`"
+        @click="handleFilterTable({ promoter_name: promoter.name })"
       >
-        <tr class="bg-white transform: translate-y-[-1.5px]">
-          <td colspan="8">
-            <div class="timeline">
-              <template v-for="(item, index) in marketsTimeLine" :key="index">
-                <div
-                  :class="`container ${item.active !== null ? 'active' : ''}`"
-                >
-                  <div class="content">
-                    <h2>{{ item.market.name }}</h2>
-                    <span v-if="item.market.sale">
-                      {{
-                        new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL'
-                        }).format(item.market.sale)
-                      }}
-                    </span>
+        <div>
+          {{ promoter.name }}
+        </div>
+      </Slide>
+    </Carousel>
+    <!-- table -->
+    <div>
+      <CustomTable
+        :headers="headers"
+        :data="data"
+        :colspans="colspans"
+        :filter="filter"
+      >
+        <template #column0="{ entity }">
+          {{ String(entity.data.route_number).toUpperCase() }}
+        </template>
+        <template #column1="{ entity }">
+          {{ entity.data.promoter }}
+        </template>
+        <template #column2="{ entity }">
+          {{ entity.data.visits_made }}
+        </template>
+        <template #column3="{ entity }">
+          {{ entity.data.total_visits }}
+        </template>
+        <template #column4="{ entity }">
+          <button
+            @click="
+              handleRowClick({
+                route_id: entity.data.id,
+                row_index: entity.row_id
+              })
+            "
+            class="bg-[#dee6f8] p-[0.5rem] rounded-[0.5rem] w-[4rem] h-[4rem] grid place-content-center"
+          >
+            <i
+              v-if="active_row.row_index === entity.row_id"
+              class="fi fi-rr-angle-small-up text-[2rem] block mt-3"
+            ></i>
+            <i
+              v-else
+              class="fi fi-rr-angle-small-down text-[2rem] block mt-3"
+            ></i>
+          </button>
+        </template>
+        <template
+          v-slot:[`column-${active_row.row_index}-expanded`]
+          v-if="active_row.row_index !== null"
+        >
+          <tr class="bg-white transform: translate-y-[-1.5px]">
+            <td colspan="8">
+              <div class="timeline">
+                <template v-for="(item, index) in marketsTimeLine" :key="index">
+                  <div
+                    :class="`container ${item.active !== null ? 'active' : ''}`"
+                  >
+                    <div class="content">
+                      <h2>{{ item.market.name }}</h2>
+                      <span v-if="item.market.sale">
+                        {{
+                          new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                          }).format(item.market.sale.total_price)
+                        }}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </template>
-            </div>
-          </td>
-        </tr>
-      </template>
-    </CustomTable>
+                </template>
+              </div>
+            </td>
+          </tr>
+        </template>
+      </CustomTable>
+    </div>
   </div>
 </template>
 

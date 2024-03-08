@@ -19,6 +19,45 @@ body {
   overflow: hidden;
 }
 
+// overflow pattern
+
+/* Firefox (uncomment to work in Firefox, although other properties will not work!)  */
+/** {
+  scrollbar-width: thin;
+  scrollbar-color: #7F43FF #DFE9EB;
+}*/
+
+/* Chrome, Edge and Safari */
+*::-webkit-scrollbar {
+  height: 3px;
+  width: 3px;
+}
+*::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #dfe9eb;
+}
+
+*::-webkit-scrollbar-track:hover {
+  background-color: #b8c0c2;
+}
+
+*::-webkit-scrollbar-track:active {
+  background-color: #b8c0c2;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #7f43ff70;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #d7d6f3;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: #0e044a;
+}
+
 // espaçamentos multiplos de 4
 
 @for $i from 1 through 10 {

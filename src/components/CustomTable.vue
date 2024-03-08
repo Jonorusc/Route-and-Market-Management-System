@@ -91,19 +91,9 @@ table {
   -moz-border-top-left-radius: 1rem;
   -webkit-border-top-right-radius: 1rem;
   -moz-border-top-right-radius: 1rem;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
   background-color: #f0f0f0;
-
-  .header {
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    z-index: 2;
-    background-color: #f0f0f0;
-    th {
-      border-top-right-radius: 1rem;
-      border-top-left-radius: 1rem;
-    }
-  }
 
   td {
     padding: 1.5rem 0 2rem 3.4rem;

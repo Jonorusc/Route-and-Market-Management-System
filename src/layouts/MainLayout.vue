@@ -54,11 +54,7 @@ export default {
         <main
           class="flex flex-col w-full lg:ml-[29rem] lg:w-[calc(100% - 29rem)]"
         >
-          <router-view v-slot="{ Component, route }">
-            <transition :name="route.meta.transition || 'slide-right'">
-              <component :is="Component" :key="route.path" />
-            </transition>
-          </router-view>
+          <router-view />
         </main>
       </div>
     </q-page-container>

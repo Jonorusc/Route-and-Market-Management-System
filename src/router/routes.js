@@ -5,14 +5,12 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import('pages/IndexPage.vue'),
-        meta: { transition: 'slide-right' }
+        component: () => import('pages/IndexPage.vue')
       },
       // ROTAS - ALL THE 'ROTAS' ROUTES
       {
         path: '/rotas',
-        component: () => import('pages/RoutesPage.vue'),
-        meta: { transition: 'slide-left' }
+        component: () => import('pages/RoutesPage.vue')
       },
       {
         path: '/produtos',

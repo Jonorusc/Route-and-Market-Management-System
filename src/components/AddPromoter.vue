@@ -102,7 +102,18 @@ export default {
         })
         .catch((err) => {
           console.log(err)
-          const { errors } = err
+          const { errors, message } = err
+
+          if (!errors) {
+            globals.value.$q.notify({
+              type: 'warning',
+              message: message,
+              position: 'top-right',
+              timeout: 7000,
+              progress: true
+            })
+            return
+          }
 
           Object.keys(errors).forEach((key) => {
             globals.value.$q.notify({
@@ -135,7 +146,18 @@ export default {
           ctx.emit('close', false)
         })
         .catch((err) => {
-          const { errors } = err
+          const { errors, message } = err
+
+          if (!errors) {
+            globals.value.$q.notify({
+              type: 'warning',
+              message: message,
+              position: 'top-right',
+              timeout: 7000,
+              progress: true
+            })
+            return
+          }
 
           Object.keys(errors).forEach((key) => {
             globals.value.$q.notify({
