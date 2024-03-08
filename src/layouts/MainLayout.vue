@@ -20,6 +20,12 @@ export default {
       if (!token || jwt_decode(token).exp <= Math.floor(new Date() / 1000)) {
         localStorage.removeItem('token')
         globals.value.$router.push('/login')
+        globals.value.$q.notify({
+          message: 'Sua sessão expirou, por favor, faça login novamente.',
+          color: 'negative',
+          position: 'top',
+          timeout: 4000
+        })
       } else {
         const currentUser = user.currentUser
 
@@ -43,7 +49,7 @@ export default {
 <template>
   <q-layout>
     <q-page-container>
-      <div class="flex overflow-hidden bg-[#f8f8f8]">
+      <div class="flex bg-[#f8f8f8]">
         <SideBar />
         <main
           class="flex flex-col w-full lg:ml-[29rem] lg:w-[calc(100% - 29rem)]"

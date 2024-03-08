@@ -26,6 +26,9 @@ export default {
       return this.data.filter((item) => {
         for (let key in this.filter) {
           if (item[key] !== this.filter[key]) {
+            if (!item[key].toLowerCase().indexOf(this.filter[key]) === -1) {
+              return true
+            }
             return false
           }
         }
@@ -77,34 +80,38 @@ export default {
 <style lang="scss">
 table {
   border-collapse: collapse;
+  border: none;
   width: 100%;
-  table-layout: auto !important;
+  overflow: auto;
+  table-layout: fixed !important;
   word-wrap: break-word;
   box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
+
+  -webkit-border-top-left-radius: 1rem;
+  -moz-border-top-left-radius: 1rem;
+  -webkit-border-top-right-radius: 1rem;
+  -moz-border-top-right-radius: 1rem;
   background-color: #f0f0f0;
 
-  tbody {
-    overflow-y: auto;
-    max-height: calc(100vh - 30rem);
-  }
-
-  tr:first-child td:first-child {
-    border-top-left-radius: 0.5rem;
-  }
-  tr:first-child td:last-child {
-    border-top-right-radius: 0.5rem;
+  .header {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #f0f0f0;
+    th {
+      border-top-right-radius: 1rem;
+      border-top-left-radius: 1rem;
+    }
   }
 
   td {
-    padding: 1.5rem 3.4rem;
+    padding: 1.5rem 0 2rem 3.4rem;
     text-align: start;
   }
 
   .header-item {
-    padding: 2rem 3.4rem;
+    padding: 2rem 0 2rem 3.4rem;
     font-size: 1.6rem;
     text-transform: capitalize;
     text-align: start;
@@ -118,12 +125,7 @@ table {
     font-weight: 600;
     position: relative;
     &:hover {
-      outline: solid 0.5px #b6b6b6;
-      outline-offset: -0.5px;
-      border-color: #b6b6b6;
-      box-shadow:
-        0 0 0 0.5px #b6b6b6,
-        inset 0 0 0 0.5px #b6b6b6;
+      background-color: #fdfdfd;
     }
   }
 }

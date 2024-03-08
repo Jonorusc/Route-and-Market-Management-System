@@ -108,7 +108,7 @@ export default {
         'actions'
       ],
       data,
-      colspans: { 1: 3 },
+      colspans: { 1: 3, 2: 2 },
       breakpoints: {
         640: {
           itemsToShow: 3.5,
@@ -155,68 +155,75 @@ export default {
     </Slide>
   </Carousel>
   <!-- table -->
-  <CustomTable
-    :headers="headers"
-    :data="data"
-    :colspans="colspans"
-    :filter="filter"
-  >
-    <template #column0="{ entity }">
-      {{ String(entity.data.route_number).toUpperCase() }}
-    </template>
-    <template #column1="{ entity }">
-      {{ entity.data.promoter }}
-    </template>
-    <template #column2="{ entity }">
-      {{ entity.data.visits_made }}
-    </template>
-    <template #column3="{ entity }">
-      {{ entity.data.total_visits }}
-    </template>
-    <template #column4="{ entity }">
-      <button
-        @click="
-          handleRowClick({
-            route_id: entity.data.id,
-            row_index: entity.row_id
-          })
-        "
-        class="bg-[#dee6f8] p-[0.5rem] rounded-[0.5rem] w-[4rem] h-[4rem] grid place-content-center"
-      >
-        <i
-          v-if="active_row.row_index === entity.row_id"
-          class="fi fi-rr-angle-small-up text-[2rem] block mt-3"
-        ></i>
-        <i v-else class="fi fi-rr-angle-small-down text-[2rem] block mt-3"></i>
-      </button>
-    </template>
-    <template
-      v-slot:[`column-${active_row.row_index}-expanded`]
-      v-if="active_row.row_index !== null"
+  <div>
+    <CustomTable
+      :headers="headers"
+      :data="data"
+      :colspans="colspans"
+      :filter="filter"
     >
-      <tr class="bg-white transform: translate-y-[-1.5px]">
-        <td colspan="100">
-          <div class="timeline">
-            <template v-for="(item, index) in marketsTimeLine" :key="index">
-              <div :class="`container ${item.active !== null ? 'active' : ''}`">
-                <div class="content">
-                  <h2>{{ item.market.name }}</h2>
-                  <span v-if="item.market.sale">
-                    {{
-                      new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                      }).format(item.market.sale)
-                    }}
-                  </span>
+      <template #column0="{ entity }">
+        {{ String(entity.data.route_number).toUpperCase() }}
+      </template>
+      <template #column1="{ entity }">
+        {{ entity.data.promoter }}
+      </template>
+      <template #column2="{ entity }">
+        {{ entity.data.visits_made }}
+      </template>
+      <template #column3="{ entity }">
+        {{ entity.data.total_visits }}
+      </template>
+      <template #column4="{ entity }">
+        <button
+          @click="
+            handleRowClick({
+              route_id: entity.data.id,
+              row_index: entity.row_id
+            })
+          "
+          class="bg-[#dee6f8] p-[0.5rem] rounded-[0.5rem] w-[4rem] h-[4rem] grid place-content-center"
+        >
+          <i
+            v-if="active_row.row_index === entity.row_id"
+            class="fi fi-rr-angle-small-up text-[2rem] block mt-3"
+          ></i>
+          <i
+            v-else
+            class="fi fi-rr-angle-small-down text-[2rem] block mt-3"
+          ></i>
+        </button>
+      </template>
+      <template
+        v-slot:[`column-${active_row.row_index}-expanded`]
+        v-if="active_row.row_index !== null"
+      >
+        <tr class="bg-white transform: translate-y-[-1.5px]">
+          <td colspan="8">
+            <div class="timeline">
+              <template v-for="(item, index) in marketsTimeLine" :key="index">
+                <div
+                  :class="`container ${item.active !== null ? 'active' : ''}`"
+                >
+                  <div class="content">
+                    <h2>{{ item.market.name }}</h2>
+                    <span v-if="item.market.sale">
+                      {{
+                        new Intl.NumberFormat('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL'
+                        }).format(item.market.sale)
+                      }}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </template>
-          </div>
-        </td>
-      </tr>
-    </template>
-  </CustomTable>
+              </template>
+            </div>
+          </td>
+        </tr>
+      </template>
+    </CustomTable>
+  </div>
 </template>
 
 <style lang="scss" scoped>

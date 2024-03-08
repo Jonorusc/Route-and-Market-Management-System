@@ -9,7 +9,6 @@ import {
   ref
 } from 'vue'
 
-import useApi from 'src/composables/api'
 import useClickOutside from 'app/hooks/use-click-outside'
 
 import { useMarketStore } from 'src/stores/market-store'
@@ -45,8 +44,8 @@ export default {
           globals.value.$q.notify({
             color: 'negative',
             message: `Selecione um promotor para continuar.`,
-            position: 'bottom',
-            timeout: 2000
+            position: 'top-right',
+            timeout: 4000
           })
           return
         }
@@ -68,7 +67,7 @@ export default {
             color: 'positive',
             message: 'Rota criada com sucesso.',
             position: 'bottom',
-            timeout: 2000
+            timeout: 4000
           })
           ctx.emit('success', true)
         } catch (error) {
@@ -76,7 +75,7 @@ export default {
             color: 'negative',
             message: error.message,
             position: 'bottom',
-            timeout: 2000
+            timeout: 4000
           })
           return
         } finally {

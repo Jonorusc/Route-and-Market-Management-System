@@ -1,5 +1,30 @@
 import { api } from 'boot/axios'
 
+/*
+HOW IT WORS:
+
+This composable is a wrapper for the axios instance. 
+It has all the functions to make requests to the API. 
+You can use it in any component or store.
+
+```javascript
+import useApi from 'src/composables/api'
+
+const { login, getCurrentUser, getAllMarkets } = useApi()
+
+const user = {
+  email: '
+  password
+}
+
+const user = await login(user)
+
+const currentUser = await getCurrentUser()
+
+const markets = await getAllMarkets()
+```
+*/
+
 export default function useApi() {
   const login = async (user) => {
     try {
@@ -263,6 +288,81 @@ export default function useApi() {
   }
 
   /*
+    PRODUCTS
+
+    @return {array} - The list of products
+
+    @example
+      
+      ```javascript
+      const products: { data: PRODUCT[] } = await getAllProducts()
+      ```
+  */
+
+  const getAllProducts = async () => {
+    try {
+      const response = await api.get(`/products`)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
+  /*
+    PRODUCTS
+
+    @param {body} id - The body of the product
+    @return {object} - The product object created
+
+    @example
+        
+        ```javascript
+        const product = {
+        "name": "Coca-Cola",
+        "price": 5.5,
+        }
+  
+        const newProduct: PRODUCT = await createProduct(product)
+        ```
+  */
+
+  const createProduct = async (product) => {
+    try {
+      const response = await api.post(`/products`, product)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
+  /* 
+    PRODUCTS
+
+    @param {id} id - The id of the product
+    @param {body} id - The body of the product
+
+    @example
+      
+      ```javascript
+      const product = {
+      "name": "Coca-Cola",
+      "price": 5.5,
+      }
+
+      const newProduct: PRODUCT = await updateProduct(1,product)
+      ```
+  */
+
+  const updateProduct = async (id, product) => {
+    try {
+      const response = await api.put(`/products/${id}`, product)
+      return response.data
+    } catch (error) {
+      throw error.response ? error.response.data : error
+    }
+  }
+
+  /*
     THESE FUNCTIONS ARE FOR THE STATE AND CITIES ENTITY
   */
   const getStates = async () => {
@@ -308,6 +408,9 @@ export default function useApi() {
     getAllPromoters,
     createPromoter,
     updatePromoter,
+    getAllProducts,
+    createProduct,
+    updateProduct,
     getStates,
     getCitiesByState,
     getCityFromCoords

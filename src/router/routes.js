@@ -15,19 +15,12 @@ const routes = [
         meta: { transition: 'slide-left' }
       },
       {
-        path: '/addCargo',
-        name: 'cadastrarCargo',
-        component: () => import('pages/IndexPage.vue')
+        path: '/produtos',
+        component: () => import('pages/ProductsPage.vue')
       },
       {
-        path: '/visualizarCargo/:id',
-        name: 'visualizarCargo',
-        component: () => import('pages/IndexPage.vue')
-      },
-      {
-        path: '/editarCargo/:id',
-        name: 'editarCargo',
-        component: () => import('pages/IndexPage.vue')
+        path: '/promotores',
+        component: () => import('pages/PromoterPage.vue')
       }
     ]
   },

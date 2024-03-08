@@ -10,7 +10,6 @@ import {
   ref
 } from 'vue'
 
-import useApi from 'src/composables/api'
 import useClickOutside from 'app/hooks/use-click-outside'
 
 import { useMarketStore } from 'src/stores/market-store'
@@ -142,7 +141,7 @@ export default {
           type: 'negative',
           message: 'Preencha todos os campos obrigatórios',
           position: 'top',
-          timeout: 2000
+          timeout: 4000
         })
       }
     }
@@ -157,7 +156,7 @@ export default {
             type: 'positive',
             message: `Mercado ${res.name} cadastrado com sucesso!`,
             position: 'top',
-            timeout: 2000
+            timeout: 4000
           })
           ctx.emit('success', res)
           resetForm()
@@ -191,7 +190,7 @@ export default {
             type: 'positive',
             message: `Mercado ${res.name} atualizado com sucesso!`,
             position: 'top',
-            timeout: 2000
+            timeout: 4000
           })
           ctx.emit('success', res)
           resetForm()

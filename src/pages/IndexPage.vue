@@ -89,7 +89,7 @@ export default {
 </script>
 
 <template>
-  <div class="h-[100dvh]">
+  <div class="h-[100dvh] !overflow-hidden">
     <Topbar @filter="handleTopbarFilter" filter-key="name" :data="markets">
       <template #result="{ entity }">
         <h3 class="text-[1.6rem] font-weight-[600] text-labels m-0">

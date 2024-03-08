@@ -20,7 +20,7 @@ export default {
           color: 'info',
           message: 'Preencha todos os campos',
           position: 'bottom',
-          timeout: 2000,
+          timeout: 4000,
           progress: true
         })
         return
