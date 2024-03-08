@@ -49,15 +49,18 @@ Make sure you have the following tools installed on your system:
 - [Node.js](https://nodejs.org) - We use Node.js to run the JavaScript code of the application.
 - [npm](https://www.npmjs.com/) - JavaScript package manager (usually installed with Node.js).
 - [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) - JavaScript package manager.
+- [docker](https://docs.docker.com/desktop/) - OS-level virtualization to deliver software in packages.
+
+### Set-up the backend
+
+[follow this instructions on BitBucket](https://bitbucket.org/convicti/market-api/src/master/README.md) - How to set-up the server-side enviorment
 
 ### Installation Steps
 
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/Jonorusc/code-challenges.git
-   cd vue
-   cd convicti-companies
+   git clone https://github.com/Jonorusc/convicti-technical-challenge.git
    ```
 
 2. **Install dependencies:**
