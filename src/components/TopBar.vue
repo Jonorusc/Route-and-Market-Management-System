@@ -1,54 +1,87 @@
 <script>
-import { ref, computed, watch, getCurrentInstance } from 'vue'
+import { ref } from 'vue'
+import { debounce } from 'lodash'
+
 import { useMarketStore } from 'src/stores/market-store'
 import { useRouteStore } from 'src/stores/route-store'
 
 export default {
   name: 'TopBar',
-  emits: ['open', 'filter', 'openroute'],
-  setup() {
-    const globals = ref(getCurrentInstance().appContext.config.globalProperties)
-    const search = ref('')
-    const wait = ref(false)
-    const marketStore = useMarketStore()
-    const routeStore = useRouteStore()
-    const markets = ref(marketStore.markets)
+  props: {
+    filterKey: {
+      type: String,
+      default: 'name'
+    },
+    entity: {
+      type: String,
+      default: 'empresa'
+    },
+    data: {
+      type: Array,
+      default: () => []
+    },
+    showResults: {
+      type: Boolean,
+      default: true
+    }
+  },
+  emits: ['filter', 'results'],
+  setup(props) {
+    const filter = ref('')
+    const debouncedFilter = debounce((value) => {
+      filter.value = value
+    }, 600) // debounce time
 
-    // computed
-    const filteredMarkets = computed(() => {
-      return markets?.value.filter((m) =>
-        m.name.toLowerCase().includes(search.value.toLowerCase())
-      )
-    })
-    // watches
-    watch(search, () => {
-      if (search.value.length > 2 && filteredMarkets.value.length > 0)
-        wait.value = false
-      else if (search.value.length > 2 && filteredMarkets.value.length === 0) {
-        if (wait.value) return
-
-        wait.value = true
-
-        // display something on the screen if there was no data
-        setTimeout(() => {
-          if (search.value.length > 2 && filteredMarkets.value.length === 0) {
-            globals.value.$q.notify({
-              color: 'warning',
-              message: `Nenhuma empresa foi encontrada com o nome: "${search.value}".`,
-              position: 'bottom',
-              timeout: 2000
-            })
-            wait.value = false
-          }
-        }, 500)
-      }
-    })
     return {
-      filteredMarkets,
-      search,
-      wait,
-      markets,
-      routeStore
+      filter,
+      debouncedFilter
+    }
+  },
+  computed: {
+    filteredData() {
+      let isMatchFound = false
+      const result = this.data.filter((item) => {
+        if (item[this.filterKey].toLowerCase().indexOf(this.filter) === -1) {
+          return false
+        }
+        isMatchFound = true
+        return true
+      })
+
+      if (!isMatchFound) {
+        if (this.entity === 'empresa') {
+          this.$q.notify({
+            message: `Nenhuma empresa foi encontrada com o nome: "${this.filter}".`,
+            color: 'negative',
+            position: 'top-right',
+            timeout: 4000
+          })
+        } else {
+          this.$q.notify({
+            message: `Nenhum(a) ${this.entity} encontrado`,
+            color: 'negative',
+            position: 'top-right',
+            timeout: 4000
+          })
+        }
+      }
+      return result
+    }
+  },
+  watch: {
+    filteredData(newVal) {
+      if (this.filter.length > 2 && !this.showResults) {
+        debounce(() => {
+          this.$emit('results', newVal)
+        }, 500)()
+      }
+    },
+    filter(newVal) {
+      if (newVal.length < 2 && !this.showResults) {
+        debounce(() => {
+          this.$emit('results', [])
+        }, 500)()
+      }
     }
   }
 }
@@ -57,57 +90,38 @@ export default {
 <template>
   <section id="topbar">
     <div class="search" tabindex="0">
-      <i class="fi fi-rr-search"></i>
-      <input type="text" placeholder="Pesquisar" v-model="search" />
+      <i class="fi fi-rr-search search-icon"></i>
+      <input
+        type="text"
+        ref="search"
+        placeholder="Pesquisar"
+        v-model="filter"
+      />
+      <!-- @input="debouncedFilter($event.target.value)" -->
       <div
-        v-if="search.length > 2 && filteredMarkets.length > 0"
+        v-if="filter.length > 2 && filteredData.length > 0 && showResults"
         class="search-results"
       >
         <div
-          v-for="result in filteredMarkets"
-          :key="result.id"
+          v-for="item in filteredData"
+          :key="item.id"
           class="item"
-          @click="$emit('filter', result), (search = '')"
+          @click="
+            $emit('filter', item), (filter = ''), ($refs.search.value = '')
+          "
         >
-          <h3>{{ result.name }}</h3>
-          <h4>
-            {{ result.representantive_user || result.person_responsible }}
-          </h4>
+          <slot name="result" :entity="item"></slot>
         </div>
       </div>
     </div>
 
     <div class="flex gap-4">
-      <button class="add-markets" @click="$emit('open', true)">
-        <span class="title">adicionar mercado</span>
-        <i class="fi fi-rr-plus"></i>
-      </button>
-      <button
-        v-if="routeStore.markets_id.length > 0"
-        class="bg-secondary w-[17rem] rounded-[0.8rem] flex justify-between items-center px-8"
-        @click="$emit('openroute', true)"
-      >
-        <div class="flex flex-col items-center">
-          <span class="!text-background text-[1.6rem] font-semibold"
-            >Nova rota</span
-          >
-          <span class="!text-background text-[1.4rem]">
-            {{ routeStore.markets_id.length }} mercados
-          </span>
-        </div>
-        <div
-          class="grid place-items-center justify-center w-[3rem] h-[3rem] bg-background rounded-[50%]"
-        >
-          <i
-            class="fi fi-rr-angle-small-right !text-secondary mt-1 text-3xl"
-          ></i>
-        </div>
-      </button>
+      <slot name="buttons"></slot>
     </div>
   </section>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #topbar {
   @media screen and (max-width: 1054px) {
     /* margin-left: 0; */
@@ -214,7 +228,7 @@ export default {
     }
   }
 
-  .add-markets {
+  .topbar-button {
     outline: none;
     border: none;
     display: flex;

@@ -9,7 +9,6 @@ const AddMarket = defineAsyncComponent(() => import('components/AddMarket.vue'))
 import Topbar from 'components/TopBar.vue'
 import MainMap from 'components/MainMap.vue'
 
-//
 import { useMarketStore } from 'src/stores/market-store'
 import { useRouteStore } from 'src/stores/route-store'
 
@@ -64,7 +63,7 @@ export default {
           color: 'negative',
           message: error.message,
           position: 'bottom',
-          timeout: 2000
+          timeout: 4000
         })
       }
     }
@@ -75,6 +74,7 @@ export default {
       openAddMarket,
       openAddRoute,
       marketToEdit,
+      routeStore,
       markets,
       filterId,
       onSuccess,
@@ -90,11 +90,43 @@ export default {
 
 <template>
   <div class="h-[100dvh]">
-    <Topbar
-      @open="handleMarketModal"
-      @filter="handleTopbarFilter"
-      @openroute="handleOpenRoute"
-    />
+    <Topbar @filter="handleTopbarFilter" filter-key="name" :data="markets">
+      <template #result="{ entity }">
+        <h3 class="text-[1.6rem] font-weight-[600] text-labels m-0">
+          {{ entity.name }}
+        </h3>
+        <h4 class="text-[1.4rem] font-weight-[400] text-labels mt-[-1rem]">
+          {{ entity.representantive_user || entity.person_responsible }}
+        </h4>
+      </template>
+      <template #buttons>
+        <button class="topbar-button" @click="handleMarketModal(true)">
+          <span class="title">adicionar mercado</span>
+          <i class="fi fi-rr-plus"></i>
+        </button>
+        <button
+          v-if="routeStore.markets_id.length > 0"
+          class="bg-secondary w-[17rem] rounded-[0.8rem] flex justify-between items-center px-8"
+          @click="handleOpenRoute(true)"
+        >
+          <div class="flex flex-col items-center">
+            <span class="!text-background text-[1.6rem] font-semibold"
+              >Nova rota</span
+            >
+            <span class="!text-background text-[1.4rem]">
+              {{ routeStore.markets_id.length }} mercados
+            </span>
+          </div>
+          <div
+            class="grid place-items-center justify-center w-[3rem] h-[3rem] bg-background rounded-[50%]"
+          >
+            <i
+              class="fi fi-rr-angle-small-right !text-secondary mt-1 text-3xl"
+            ></i>
+          </div>
+        </button>
+      </template>
+    </Topbar>
     <MainMap
       :filter="filterId"
       @editing="handleEditMode"
