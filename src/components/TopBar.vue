@@ -30,57 +30,74 @@ export default {
     const filter = ref('')
     const debouncedFilter = debounce((value) => {
       filter.value = value
-    }, 600) // debounce time
+    }, 400) // debounce time
 
+    const result_done = ref(false)
     return {
       filter,
-      debouncedFilter
+      debouncedFilter,
+      result_done
     }
   },
   computed: {
     filteredData() {
-      let isMatchFound = false
-      const result = this.data.filter((item) => {
-        if (item[this.filterKey].toLowerCase().indexOf(this.filter) === -1) {
-          return false
-        }
-        isMatchFound = true
-        return true
-      })
+      // Only proceed with filtering if filter is not empty
+      if (this.filter) {
+        let isMatchFound = false
+        const result = this.data.filter((item) => {
+          if (
+            item[this.filterKey]
+              .toLowerCase()
+              .indexOf(this.filter.toLowerCase()) === -1
+          ) {
+            return false
+          }
+          isMatchFound = true
+          return true
+        })
 
-      if (!isMatchFound) {
-        if (this.entity === 'empresa') {
-          this.$q.notify({
-            message: `Nenhuma empresa foi encontrada com o nome: "${this.filter}".`,
-            color: 'negative',
-            position: 'top-right',
-            timeout: 4000
-          })
-        } else {
-          this.$q.notify({
-            message: `Nenhum(a) ${this.entity} encontrado`,
-            color: 'negative',
-            position: 'top-right',
-            timeout: 4000
-          })
+        if (!isMatchFound) {
+          if (this.entity === 'empresa') {
+            this.$q.notify({
+              message: `Nenhuma empresa foi encontrada com o nome: "${this.filter}".`,
+              color: 'negative',
+              position: 'top-right',
+              timeout: 4000
+            })
+          } else {
+            this.$q.notify({
+              message: `Nenhum(a) ${this.entity} encontrado`,
+              color: 'negative',
+              position: 'top-right',
+              timeout: 4000
+            })
+          }
         }
+        return result
       }
-      return result
+
+      // If filter is empty, return original data
+      return this.data
     }
   },
   watch: {
     filteredData(newVal) {
-      if (this.filter.length > 2 && !this.showResults) {
+      if (this.filter.length > 2 && !this.showResults && !this.result_done) {
         debounce(() => {
           this.$emit('results', newVal)
         }, 500)()
+        this.result_done = true
       }
     },
     filter(newVal) {
-      if (newVal.length < 2 && !this.showResults) {
+      if (newVal.length < 2 && !this.showResults && this.result_done) {
         debounce(() => {
           this.$emit('results', [])
         }, 500)()
+        this.result_done = true
+      }
+      if (newVal.length === 0) {
+        this.result_done = false
       }
     }
   }
