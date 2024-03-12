@@ -58,7 +58,7 @@ export default {
       ) {
         // before submit remove mask from cpf (mask="###.###.###-##") and whatsapp_phone (mask="(##) #####-####")
         promoter.value.cpf = promoter.value.cpf.replace(/\D/g, '')
-        promoter.value.whatsapp_phone = promoter.value.phonenumber.replace(
+        promoter.value.phonenumber = promoter.value.phonenumber.replace(
           /\D/g,
           ''
         )
