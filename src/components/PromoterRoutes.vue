@@ -1,5 +1,6 @@
 <script>
 import { ref, computed, getCurrentInstance, defineAsyncComponent } from 'vue'
+import { storeToRefs } from 'pinia'
 
 // componentes
 const MakeSale = defineAsyncComponent(() => import('components/MakeSale.vue'))
@@ -26,20 +27,31 @@ export default {
     const filterId = ref(0)
     const active_route = ref({})
     const clicked_market = ref({})
-    const data = computed(() =>
-      routeStore.getRoutes.filter(
-        ({ promoter }) => promoter.name === user.currentUser.name
+    const { getRoutes, getLoading } = storeToRefs(routeStore)
+
+    const data = computed(() => {
+      try {
+        return getRoutes.value.filter(
+          ({ promoter }) => promoter.name === user?.currentUser?.name
+        )
+      } catch {
+        return []
+      }
+    })
+
+    // there's an error in the backend (it's not returning the routes when the user is a promoter, it's doing so only when the user is an admin), so I'm fetching all the routes for now
+    // routeStore.fetchRoutesByPromoter(user.currentUser.name)
+
+    promoterStore.fetchPromoters()
+    routeStore.fetchRoutes()
+    const currentPromoter = computed(() =>
+      promoterStore.getPromoters.find(
+        (promoter) => promoter.name === user.currentUser.name
       )
     )
 
-    // there's an error in the backend (it's not returning the routes when the user is a promoter, it's doing so only when the user is an admin), so I'm fetching all the routes for now
-    // promoterStore.fetchRoutesByPromoter(user.currentUser.name)
-
-    routeStore.fetchRoutes()
-    const currentPromoter = promoterStore.getPromoters.find(
-      (promoter) => promoter.name === user.currentUser.name
-    )
-    promoterStore.setPromoter(currentPromoter.id)
+    if (currentPromoter.value?.id)
+      promoterStore.setPromoter(currentPromoter.value.id)
 
     // methods
     function handleTimeLineFilter({ market, route }) {
@@ -49,7 +61,6 @@ export default {
     }
 
     function handleSuccess(res) {
-      routeStore.updateRoute(res)
       routeStore.fetchRoutes()
     }
 
@@ -72,6 +83,7 @@ export default {
       active_route,
       routeStore,
       promoterStore,
+      getLoading,
       filterId,
       handleTimeLineFilter,
       handleMapClick,
@@ -79,7 +91,8 @@ export default {
       openMakeSaleModal,
       openMakeSale,
       handleSuccess,
-      data
+      data,
+      user
     }
   }
 }
@@ -88,14 +101,14 @@ export default {
 <template>
   <section class="flex w-full h-[100dvh] promoter_view">
     <TimeLine
-      :data="data"
+      :data="getLoading ? [] : data"
       @filter="handleTimeLineFilter"
       @row-click="handleRowClick"
       :active-row="active_route"
     />
     <MainMap :filter="filterId" @clicked_market="handleMapClick" />
     <div
-      v-if="clicked_market.id && active_route.id"
+      v-if="clicked_market?.id && active_route?.id"
       class="map_modal bg-white p-[2rem] flex flex-col rounded-[1rem] min-w-[30rem] shadow-md"
     >
       <h4 class="leading-[1.4] text-[1.6rem] font-bold truncate">

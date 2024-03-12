@@ -8,7 +8,8 @@ export const useRouteStore = defineStore('routeStore', {
     return {
       markets_id: [],
       routes: [],
-      latlngs: []
+      latlngs: [],
+      loading: false
     }
   },
   actions: {
@@ -26,11 +27,14 @@ export const useRouteStore = defineStore('routeStore', {
     },
     async fetchRoutes() {
       try {
+        this.loading = true
         const routes = await getAllRoutes()
         this.routes = routes.data
         return routes.data
       } catch (error) {
         throw error.response ? error.response.data : error
+      } finally {
+        this.loading = false
       }
     },
     async fetchRoutesByPromoter(promoter_name) {
@@ -58,7 +62,10 @@ export const useRouteStore = defineStore('routeStore', {
     },
     updateRoute(route) {
       const index = this.routes.findIndex((r) => r.id === route.id)
-      this.routes[index] = route
+      // remove index from the routes
+      this.routes.splice(index, 1)
+      // add the updated route to the routes
+      this.routes.push(route)
     },
     removeMarketFromRoute(market_id) {
       this.markets_id = this.markets_id.filter((id) => id !== market_id)
@@ -81,6 +88,9 @@ export const useRouteStore = defineStore('routeStore', {
     },
     getLatLngs() {
       return this.latlngs
+    },
+    getLoading() {
+      return this.loading
     }
   },
   persist: {

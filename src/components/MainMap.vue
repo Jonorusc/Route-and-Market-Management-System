@@ -58,12 +58,13 @@ export default {
     }
 
     function handleMarkerClick(_market) {
+      if (!_market) return
       ctx.emit('clicked_market', _market)
       market.value = _market
       center.value = [_market.latitude, _market.longitude]
       clearTimeout(timeout.value)
-      // close market details after 25 seconds
-      const seconds = 25 * 1000
+      // close market details after 10 seconds
+      const seconds = 10000
       timeout.value = setTimeout(() => {
         market.value = {}
         ctx.emit('clicked_market', {})

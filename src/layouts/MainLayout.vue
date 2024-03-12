@@ -35,10 +35,12 @@ export default {
 
         // if there's no user in the store, fetch it from the API
         if (!currentUser) {
-          userStore.getUserInfo()
+          globals.value.$router.push('/login')
+          user.getUserInfo()
         }
       }
     })
+
     return {
       user
     }

@@ -118,6 +118,10 @@ body {
   }
 }
 
+.q-field__prefix {
+  color: $primary !important;
+}
+
 .twice {
   .q-field--standout .q-field__control {
     width: calc(15rem - 0.5rem);

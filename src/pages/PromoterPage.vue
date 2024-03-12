@@ -8,6 +8,7 @@ import {
   getCurrentInstance,
   defineAsyncComponent
 } from 'vue'
+import { storeToRefs } from 'pinia'
 
 const AddPromoter = defineAsyncComponent(() =>
   import('components/AddPromoter.vue')

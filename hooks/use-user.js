@@ -15,7 +15,6 @@
 //   return { user, error, mutate, isValidating }
 // }
 
-import { defineStore } from 'pinia'
 import { userStore } from 'src/stores/user-store'
 
 export const useUser = () => {
@@ -24,9 +23,10 @@ export const useUser = () => {
   const currentUser = userStoreCurrentUser
 
   const getUserInfo = $userStore.getUserInfo
-
+  const getUser = $userStore.getUser
   return {
     currentUser,
-    getUserInfo
+    getUserInfo,
+    getUser
   }
 }

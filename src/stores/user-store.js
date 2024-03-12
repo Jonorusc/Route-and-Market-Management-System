@@ -35,6 +35,9 @@ export const userStore = defineStore('userStore', {
     },
     isLoggedIn: (state) => {
       return !state.currentUser
+    },
+    getUser() {
+      return this.currentUser
     }
   },
   persist: true

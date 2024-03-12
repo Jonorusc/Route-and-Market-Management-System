@@ -1,5 +1,6 @@
 <script>
 import { ref, computed, getCurrentInstance, defineAsyncComponent } from 'vue'
+import { storeToRefs } from 'pinia'
 
 // componentes
 const AddRoute = defineAsyncComponent(() => import('components/AddRoute.vue'))
@@ -27,11 +28,15 @@ export default {
     const openAddMarket = ref(false)
     const openAddRoute = ref(false)
     const marketToEdit = ref(null)
-    const markets = computed(() => marketStore.getMarkets)
+    const { getMarkets: markets } = storeToRefs(marketStore)
+    // const markets = computed(() => marketStore.getMarkets)
     const filterId = ref(0)
 
     function onSuccess(market) {
-      // marketStore.fetchMarkets()
+      marketStore.fetchMarkets()
+      setTimeout(() => {
+        filterId.value = market.id
+      }, 500)
     }
 
     function handleClickOnMap(event) {}
@@ -72,6 +77,7 @@ export default {
     }
 
     marketStore.fetchMarkets()
+    routeStore.setLatLngs([])
 
     return {
       openAddMarket,

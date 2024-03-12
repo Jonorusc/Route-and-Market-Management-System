@@ -32,7 +32,6 @@ export default {
     const active_row = ref(null)
     const productToEdit = ref(null)
     const openAddProduct = ref(false)
-
     const data = ref(productStore.getProducts)
 
     // methods

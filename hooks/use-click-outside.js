@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 
 export default function useClickOutside(element, callback = () => {}) {
   function mount() {
