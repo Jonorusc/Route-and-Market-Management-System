@@ -54,7 +54,7 @@ export default {
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-if="filteredData.length">
         <template
           v-for="(entity, entity_index) in filteredData"
           :key="`entity-${entity_index}`"
@@ -73,6 +73,16 @@ export default {
           </tr>
           <slot :name="`column-${entity_index}-expanded`"></slot>
         </template>
+      </tbody>
+      <tbody v-else>
+        <tr>
+          <td :colspan="headers.length * 2">
+            <div class="flex justify-center items-center">
+              <i class="fi fi-rr-search"></i>
+              <span class="ml-2 block">Nenhum resultado encontrado</span>
+            </div>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
