@@ -37,7 +37,7 @@ export default {
     function resetForm() {
       // sets all fields as an empty string
       product.value = Object.fromEntries(
-        Object.keys(product.value).map((key) => [key, ''])
+        Object.keys(product.value).map((key) => [key, null])
       )
     }
 
@@ -215,18 +215,20 @@ export default {
             <div class="input">
               <label for="c-name">Preço Unitário</label>
               <q-input
-                type="number"
                 dense
                 standout
                 v-model="product.price"
                 id="c-responsavel"
+                mask="#.##"
+                fill-mask="#"
+                reverse-fill-mask
                 name="c-responsavel"
                 required
                 :rules="[
                   (val) =>
                     val > 0 ||
                     val > 10000 ||
-                    'Preço deve ser maior que 0 e menor que 10000'
+                    'Preço deve ser maior que R$0,00 e menor que R$10.000,00'
                 ]"
               />
             </div>

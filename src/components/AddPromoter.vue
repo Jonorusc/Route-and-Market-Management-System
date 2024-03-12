@@ -39,7 +39,7 @@ export default {
     function resetForm() {
       // sets all fields as an empty string
       promoter.value = Object.fromEntries(
-        Object.keys(promoter.value).map((key) => [key, ''])
+        Object.keys(promoter.value).map((key) => [key, null])
       )
     }
 
