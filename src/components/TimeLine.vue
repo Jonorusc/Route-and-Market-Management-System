@@ -26,7 +26,8 @@ export default {
     const { width } = useResize()
     const showTimeLine = ref(true)
     const timelineRef = ref(null)
-    const routes = ref(props.data)
+    const routes = ref([])
+    const datas = computed(() => props.data)
 
     // methods
     function handleRowClick(market, route) {
@@ -34,7 +35,7 @@ export default {
     }
     function handleFilter(data) {
       if (!data.length) {
-        routes.value = props.data
+        routes.value = []
         return
       }
 
@@ -58,6 +59,7 @@ export default {
     return {
       showTimeLine,
       routes,
+      datas,
       handleRowClick,
       handleFilter,
       timelineRef
@@ -80,7 +82,7 @@ export default {
   >
     <Topbar
       @results="handleFilter($event)"
-      :data="routes"
+      :data="routes?.length ? routes : datas"
       filter-key="number"
       entity="rota"
       :show-results="false"
@@ -90,77 +92,84 @@ export default {
       class="rows px-[2rem] h-[calc(100dvh-12rem)] overflow-y-auto pt-[0.5rem]"
     >
       <h4 class="text-primary text-bold text-[2rem] mb-[1rem]">Rotas</h4>
-      <div
-        v-for="(route, i) in routes"
-        :key="`route-${i}-${route.number}`"
-        :class="`rows_item hover:ring-[0.3rem] hover:!ring-secondary rounded-[0.5rem] shadow-md ring-[0.1rem]  mb-[1rem]${
-          activeRow.id === route.id
-            ? ' ring-secondary ring-[0.3rem]'
-            : ' ring-backgroundLight'
-        } `"
-        @click="$emit('row-click', route)"
-      >
+      <template v-if="datas?.length">
         <div
-          class="item_header px-[2rem] pt-[2rem] pb-[1rem] flex flex-col border-b-[0.1rem] !border-backgroundLight"
+          v-for="(route, i) in datas"
+          :key="`route-${i}-${route.number}`"
+          :class="`rows_item hover:ring-[0.3rem] hover:!ring-secondary rounded-[0.5rem] shadow-md ring-[0.1rem]  mb-[1rem]${
+            activeRow.id === route.id
+              ? ' ring-secondary ring-[0.3rem]'
+              : ' ring-backgroundLight'
+          } `"
+          @click="$emit('row-click', route)"
         >
-          <span class="text-grey">Numero da Rota</span>
-          <h4 class="mt-0 leading-[1.2] text-primary text-[1.8rem] uppercase">
-            {{ route.number }}
-          </h4>
-        </div>
-        <div class="item_content p-[2rem]">
-          <ul>
-            <li
-              v-for="(market, market_index) in route.markets"
-              :key="`market-${market_index}`"
-              title="Clique para realizar uma venda"
-              class="flex gap-4 justify-start items-center cursor-pointer"
-              @click.stop="handleRowClick(market, route)"
-            >
-              <div
-                :class="`icon grid place-items-center !w-[3.5rem] !h-[3.5rem] rounded-[50%]
+          <div
+            class="item_header px-[2rem] pt-[2rem] pb-[1rem] flex flex-col border-b-[0.1rem] !border-backgroundLight"
+          >
+            <span class="text-grey">Numero da Rota</span>
+            <h4 class="mt-0 leading-[1.2] text-primary text-[1.8rem] uppercase">
+              {{ route.number }}
+            </h4>
+          </div>
+          <div class="item_content p-[2rem]">
+            <ul>
+              <li
+                v-for="(market, market_index) in route.markets"
+                :key="`market-${market_index}`"
+                title="Clique para realizar uma venda"
+                class="flex gap-4 justify-start items-center cursor-pointer"
+                @click.stop="handleRowClick(market, route)"
+              >
+                <div
+                  :class="`icon grid place-items-center !w-[3.5rem] !h-[3.5rem] rounded-[50%]
                 ${
                   route.market_routes[market_index].sale
                     ? 'bg-[#b2f4df]'
                     : 'bg-[#d7d6f3]'
                 }
                 `"
-              >
-                <i
-                  :class="`mt-[0.5rem] 
+                >
+                  <i
+                    :class="`mt-[0.5rem] 
                   ${
                     route.market_routes[market_index].sale
                       ? 'text-[#5ab394] fi fi-rr-check'
                       : 'text-[#8045ff] fi fi-rr-map-pin'
                   }
                 `"
-                ></i>
-              </div>
-              <div class="flex flex-col">
-                <span
-                  class="leading-[1.2] text-primary text-[1.7rem] font-medium truncate capitalize"
-                  >{{ market.name }}</span
-                >
+                  ></i>
+                </div>
+                <div class="flex flex-col">
+                  <span
+                    class="leading-[1.2] text-primary text-[1.7rem] font-medium truncate capitalize"
+                    >{{ market.name }}</span
+                  >
 
-                <span
-                  :class="`${
-                    route.market_routes[market_index].sale
-                      ? 'text-green'
-                      : 'text-[#bfa1ff]'
-                  }`"
-                  >{{
-                    `${
+                  <span
+                    :class="`${
                       route.market_routes[market_index].sale
-                        ? 'Concluído'
-                        : 'Pendente'
-                    }`
-                  }}</span
-                >
-              </div>
-            </li>
-          </ul>
+                        ? 'text-green'
+                        : 'text-[#bfa1ff]'
+                    }`"
+                    >{{
+                      `${
+                        route.market_routes[market_index].sale
+                          ? 'Concluído'
+                          : 'Pendente'
+                      }`
+                    }}</span
+                  >
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div></template
+      >
+      <template v-else>
+        <div class="flex justify-center items-center">
+          <h4 class="text-primary text-[1.8rem]">Buscando rotas</h4>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
