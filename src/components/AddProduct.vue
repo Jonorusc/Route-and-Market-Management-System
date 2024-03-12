@@ -84,8 +84,8 @@ export default {
             position: 'top',
             timeout: 4000
           })
-          ctx.emit('success', res)
           resetForm()
+          ctx.emit('success', res)
           ctx.emit('close', false)
         })
         .catch((err) => {
@@ -130,8 +130,8 @@ export default {
             position: 'top',
             timeout: 4000
           })
-          ctx.emit('success', res)
           resetForm()
+          ctx.emit('success', res)
           ctx.emit('close', false)
         })
         .catch((err) => {

@@ -82,11 +82,16 @@ export default {
     <q-form @submit="onSubmit" id="form">
       <div class="input">
         <label for="form-email">E-mail</label>
-        <input v-model="form.email" type="text" id="form-email" />
+        <input v-model="form.email" type="text" id="form-email" required />
       </div>
       <div class="input">
         <label for="form-password">Senha</label>
-        <input v-model="form.password" type="password" id="form-password" />
+        <input
+          v-model="form.password"
+          type="password"
+          id="form-password"
+          required
+        />
       </div>
 
       <q-btn
