@@ -25,8 +25,8 @@ export default {
     const productStore = useProductStore()
     const wrapper = ref(null)
     const product = ref({
-      name: '',
-      price: 0
+      name: null,
+      price: null
     })
 
     // useClickOutside(wrapper, () => {
@@ -48,7 +48,7 @@ export default {
     async function onSubmit() {
       const { name, price } = product.value
 
-      if (name && price > 0) {
+      if (name && parseInt(price) > 0) {
         globals.value.$q.loading.show({
           message: `${
             product_id.value === null ? 'Cadastrando' : 'Atualizando'
@@ -74,7 +74,8 @@ export default {
     async function create() {
       await productStore
         .addProduct({
-          ...product.value
+          name: product.value.name,
+          price: parseInt(product.value.price.split(',')[0])
         })
         .then((res) => {
           globals.value.$q.notify({
@@ -119,7 +120,8 @@ export default {
     async function update() {
       await productStore
         .updateProduct(product_id.value, {
-          ...product.value
+          name: product.value.name,
+          price: parseInt(product.value.price.split(',')[0])
         })
         .then((res) => {
           globals.value.$q.notify({
@@ -169,7 +171,8 @@ export default {
 
         product.value = {
           name: current_product.name,
-          price: current_product.price
+          // need to add 00 to the end of the price
+          price: current_product.price + '00' // it does'nt matter if it's a string once I'm using the mask to format the price
         }
       }
     })
@@ -219,15 +222,15 @@ export default {
                 standout
                 v-model="product.price"
                 id="c-responsavel"
-                mask="#.##"
+                mask="#,##"
                 fill-mask="#"
+                prefix="R$"
                 reverse-fill-mask
                 name="c-responsavel"
                 required
                 :rules="[
                   (val) =>
-                    val > 0 ||
-                    val > 10000 ||
+                    (parseInt(val) > 0 && parseInt(val) <= 10000) ||
                     'Preço deve ser maior que R$0,00 e menor que R$10.000,00'
                 ]"
               />

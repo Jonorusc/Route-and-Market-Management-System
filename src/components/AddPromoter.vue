@@ -25,10 +25,10 @@ export default {
     const promoterStore = usePromoterStore()
     const wrapper = ref(null)
     const promoter = ref({
-      name: '',
-      email: '',
-      cpf: '',
-      phonenumber: ''
+      name: null,
+      email: null,
+      cpf: null,
+      phonenumber: null
     })
 
     // useClickOutside(wrapper, () => {
@@ -251,6 +251,7 @@ export default {
                 required
                 :rules="[(val) => !!val || 'Campo obrigatório']"
                 mask="(##) #####-####"
+                fill-mask
               />
             </div>
             <div class="input">
@@ -265,6 +266,7 @@ export default {
                 required
                 :rules="[(val) => !!val || 'Campo obrigatório']"
                 mask="###.###.###-##"
+                fill-mask
               />
             </div>
           </div>

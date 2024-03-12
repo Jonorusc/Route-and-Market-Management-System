@@ -39,7 +39,6 @@ export default {
     const state_id = ref(null)
     const city_id = ref(null)
     const wrapper = ref(null)
-    const formRef = ref(null)
     const market = ref({
       name: '',
       person_responsible: '',
@@ -275,7 +274,6 @@ export default {
       }
     })
 
-    console.log(formRef.value)
     return {
       onOpen,
       market_id,
@@ -283,7 +281,6 @@ export default {
       market,
       cities,
       wrapper,
-      formRef,
       citiesFilterFn,
       statesFilterFn,
       onReset,
@@ -299,7 +296,7 @@ export default {
 <template>
   <section id="addMarket" :class="`${onOpen ? 'show' : 'hide'}`">
     <div class="register" ref="wrapper">
-      <q-form ref="formRef" @submit="onSubmit" @reset="onReset">
+      <q-form @submit="onSubmit" @reset="onReset">
         <div class="form">
           <h4>
             {{ `${market_id === null ? 'Cadastrar' : 'Editar'}` }} mercado
