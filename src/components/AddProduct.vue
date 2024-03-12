@@ -2,7 +2,7 @@
 import { getCurrentInstance, onMounted, computed, watch, ref } from 'vue'
 
 import useClickOutside from 'app/hooks/use-click-outside'
-
+import { formatToDecimal } from 'app/lib/utils/format'
 import { useProductStore } from 'src/stores/product-store'
 
 export default {
@@ -75,7 +75,7 @@ export default {
       await productStore
         .addProduct({
           name: product.value.name,
-          price: parseInt(product.value.price.split(',')[0])
+          price: parseFloat(product.value.price.replace(',', '.'))
         })
         .then((res) => {
           globals.value.$q.notify({
@@ -121,7 +121,7 @@ export default {
       await productStore
         .updateProduct(product_id.value, {
           name: product.value.name,
-          price: parseInt(product.value.price.split(',')[0])
+          price: parseFloat(product.value.price.replace(',', '.'))
         })
         .then((res) => {
           globals.value.$q.notify({
@@ -168,11 +168,11 @@ export default {
         const current_product = productStore.getProducts.find(
           (p) => p.id === val
         )
+        const price = formatToDecimal(current_product.price)
 
         product.value = {
           name: current_product.name,
-          // need to add 00 to the end of the price
-          price: current_product.price + '00' // it does'nt matter if it's a string once I'm using the mask to format the price
+          price
         }
       }
     })
@@ -223,7 +223,7 @@ export default {
                 v-model="product.price"
                 id="c-responsavel"
                 mask="#,##"
-                fill-mask="#"
+                fill-mask="0"
                 prefix="R$"
                 reverse-fill-mask
                 name="c-responsavel"
@@ -352,6 +352,8 @@ export default {
       height: 3.5rem;
       border-radius: 0.4rem;
       width: 100%;
+      padding: 0;
+      height: 100%;
       &::placeholder {
         color: $labels;
       }
